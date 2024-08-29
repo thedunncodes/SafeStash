@@ -44,11 +44,8 @@ export default function Carousel({ data }: CarouselProps ) {
         const scrollPosition = event.nativeEvent.contentOffset.x;
         const index = Math.round(scrollPosition / (windowWidth - pad));
         setActiveIndex(index);
-        console.log('Scroll Y Position:', offsetY);
     }, [])
 
-    console.log('Active Index', activeIndex);
-    console.log(extendedData.indexOf(extendedData[activeIndex]))
     useEffect(() => {
         if (activeIndex === 0) {
           // If we're at the beginning, jump to the "real" last item
