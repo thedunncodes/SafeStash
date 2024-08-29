@@ -1,4 +1,4 @@
-import { Text, Image, View, StyleSheet, ScrollView, StatusBar } from "react-native";
+import { Text, Image, View, StyleSheet} from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import Colors from "@/constants/Colors";
 
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        height: '20%', // This will cover the bottom 20% of the image
+        height: '20%',
       }
 
 })
