@@ -1,45 +1,34 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, FlatList, Image, Dimensions, StatusBar, StyleSheet, ListRenderItem, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { View, FlatList, Dimensions, StatusBar, StyleSheet, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { OnboardingPageItem, OnboardingItem } from './onboardingPageItem';
+import Colors from '@/constants/Colors';
 
 const { width: windowWidth } = Dimensions.get('window')
-const pad: number = 14
+const pad: number = 0
 
-type CarouselItem = {
-    id: string;
-    image: string;
-  };
-  
 type CarouselProps = {
-    data: CarouselItem[];
-  };
+  data: OnboardingItem[],
+}
 
-
-  
-
-export default function Carousel({ data }: CarouselProps ) {
+export default function Carousel({ data }: CarouselProps) {
     const [activeIndex, setActiveIndex] = useState(0);
     const flatListRef = useRef<FlatList>(null);
 
-    const renderItem = useCallback(({item}: {item: CarouselItem}) => {
-        return(
-            <View style={styles.slide}>
-               <Image source={{ uri: item.image }} style={styles.image} />
-            </View>
-        )
+    const renderItem = useCallback(({item}: {item: OnboardingItem}) => {
+        return <OnboardingPageItem {...item} />
     }, [])
     
     const extendedData = [data[data.length - 1], ...data, data[0]];
-      
-    
+
     const getItemLayout = useCallback((_: any, index: number) => ({
         length: (windowWidth - pad),
         offset: (windowWidth - pad) * index,
         index,
     }), [])
 
-    const keyExtractor = useCallback((item: CarouselItem, index: number) => `${item.id}-${index}`, []);
+    const keyExtractor = useCallback((item: OnboardingItem, index: number) => `${item.id}-${index}`, []);
     
-    const onScroll = useCallback((event: any) => {
+    const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const offsetY = event.nativeEvent.contentOffset.x;
         const scrollPosition = event.nativeEvent.contentOffset.x;
         const index = Math.round(scrollPosition / (windowWidth - pad));
@@ -48,18 +37,30 @@ export default function Carousel({ data }: CarouselProps ) {
 
     useEffect(() => {
         if (activeIndex === 0) {
-          // If we're at the beginning, jump to the "real" last item
           flatListRef.current?.scrollToIndex({ index: data.length, animated: false });
           setActiveIndex(data.length);
         } else if (activeIndex === extendedData.length - 1) {
-          // If we're at the end, jump to the "real" first item
           flatListRef.current?.scrollToIndex({ index: 1, animated: false });
           setActiveIndex(1);
         }
       }, [activeIndex, data.length, extendedData.length]);
 
     return (
-        <View style={ styles.container }>
+        <View style={ cstyles.container }>
+            <View style={cstyles.pagination}>
+              {data.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    cstyles.paginationDot,
+                    (activeIndex === index + 1 || 
+                    (activeIndex === data.length + 1 && index === 0) ||
+                    (activeIndex === 0 && index === data.length - 1)) && 
+                    cstyles.paginationDotActive,
+                  ]}
+                />
+              ))}
+            </View>
             <FlatList 
                 ref={flatListRef}
                 data={extendedData}
@@ -70,45 +71,35 @@ export default function Carousel({ data }: CarouselProps ) {
                 onScroll={onScroll}
                 pagingEnabled
                 initialScrollIndex={1}
-                snapToAlignment="center"
+                snapToAlignment="start"
+                showsHorizontalScrollIndicator={false}
+                disableIntervalMomentum={true}
             />
         </View>
     )
-
-
 }
 
-const styles = StyleSheet.create({
+const cstyles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: StatusBar.currentHeight || 40,
-    },
-    slide: {
-        width: windowWidth - pad,
-        height: 200, // Adjust as needed
-    //   justifyContent: 'center',
-    //   alignItems: 'center',
-
-    },
-    image: {
-      width: '100%',
-      height: '100%',
-      resizeMode: 'cover',
+      marginTop: StatusBar.currentHeight,
+      position: 'relative',
     },
     pagination: {
       flexDirection: 'row',
       position: 'absolute',
-      bottom: 10,
+      top: 20,
+      zIndex: 1,
       alignSelf: 'center',
     },
     paginationDot: {
-      width: 8,
+      width: 20,
       height: 8,
       borderRadius: 4,
-      backgroundColor: 'rgba(255, 255, 255, 0.92)',
+      backgroundColor: 'rgba(77, 195, 255, 0.2)',
       marginHorizontal: 4,
     },
     paginationDotActive: {
-      backgroundColor: '#007AFF',
+      backgroundColor: Colors.light.red,
     },
   });
