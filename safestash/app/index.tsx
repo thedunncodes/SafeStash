@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useFonts } from 'expo-font'
 import { useNavigation, Link } from "expo-router";
 import { Text, View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { OnboardingItem } from "@/components/onboardingPageItem";
@@ -13,14 +12,6 @@ export default function Index() {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const [loaded] = useFonts({
-    PoppinsSemiBold: require('../assets/fonts/Poppins-SemiBold.ttf'),
-  });
-
-  type CarouselItem = {
-    id: string;
-    image: string;
-  }; 
 
   const carouselData: OnboardingItem[] = [
     { id: '1', image: require('@/assets/images/exchange-icon.jpg'), context: 'Expand your international network with USD, EUR, & GBP Accounts at Your Fingertips ' },
@@ -39,12 +30,12 @@ export default function Index() {
       </SafeAreaProvider>
       <View style={ styles.authContainer }>
         <SafeAreaProvider style={ [styles.authWrapper,  Platform.OS === 'ios'? { paddingBottom: insets.bottom } : { paddingBottom: 10 }, ] } >
-            <Link href={{ pathname: "/(onboarding)/register" }} asChild style={{ backgroundColor: 'rgb(184, 0, 0)' }}>
+            <Link href={{ pathname: "/register" }} asChild style={{ backgroundColor: 'rgb(184, 0, 0)' }}>
                 <TouchableOpacity style={styles.authBtn} activeOpacity={0.7} >
                   <Text style={ styles.authBtnText } >Sign up</Text>
                 </TouchableOpacity>
             </Link>
-            <Link href={{ pathname: "/(onboarding)/register" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
+            <Link href={{ pathname: "/" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
                 <TouchableOpacity style={ styles.authBtn } activeOpacity={0.7} >
                   <Text style={ [styles.authBtnText, { color: Colors.light.text,  }] } >Login</Text>
                 </TouchableOpacity>
