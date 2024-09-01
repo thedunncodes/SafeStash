@@ -1,9 +1,11 @@
-import { Stack, useNavigation } from "expo-router";
-import { Text, View, StyleSheet, ScrollView, StatusBar, Platform } from "react-native";
 import { useEffect } from 'react';
-import HorizontalCarousel from "@/components/HorizontalCarousel";
+import { useFonts } from 'expo-font'
+import { useNavigation, Link } from "expo-router";
+import { Text, View, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { OnboardingItem } from "@/components/onboardingPageItem";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Carousel from "@/components/carousel";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Colors from "@/constants/Colors";
 
 export default function Index() {
   const navigation = useNavigation()
@@ -11,44 +13,80 @@ export default function Index() {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
+  const [loaded] = useFonts({
+    PoppinsSemiBold: require('../assets/fonts/Poppins-SemiBold.ttf'),
+  });
+
   type CarouselItem = {
     id: string;
     image: string;
   }; 
 
-  const carouselData: CarouselItem[] = [
-    { id: '1', image: 'https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg' },
-    { id: '2', image: 'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?cs=srgb&dl=pexels-souvenirpixels-417074.jpg&fm=jpg' },
-    { id: '3', image: 'https://img.freepik.com/free-photo/photorealistic-view-tree-nature-with-branches-trunk_23-2151478039.jpg' },
-    // Add more items as needed
+  const carouselData: OnboardingItem[] = [
+    { id: '1', image: require('@/assets/images/exchange-icon.jpg'), context: 'Expand your international network with USD, EUR, & GBP Accounts at Your Fingertips ' },
+    { id: '2', image: require('@/assets/images/banking-icon.jpg'), context: 'Maximize Value with the Best Currency Exchange Rates from Trusted Providers' },
+    { id: '3', image: require('@/assets/images/did-image2.jpg'), context: 'Manage Your Digital Credentials with Ease and Privatize Your data' },
+    { id: '4', image: require('@/assets/images/spending-insights.jpg'), context: 'Smarter Spending with Personalized Payment Tracking' },
+    { id: '4', image: require('@/assets/images/credit-cards-image.jpg'), context: 'Create Debit Cards And Enjoy Effortless Spending with Secure, Global Access' },
   ];
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView style={ styles.body }>
-      <SafeAreaView style={ styles.Carouselcontainer }>
+    <View style={ styles.body }>
+      <SafeAreaProvider style={[ styles.carouselcontainer, Platform.OS === 'ios'? { paddingTop: insets.top } : { paddingTop: 10 }, { paddingBottom: 0 }]}>
         <Carousel data={carouselData} />
-      </SafeAreaView>
+      </SafeAreaProvider>
       <View style={ styles.authContainer }>
-        <Text>SafeStash Finace Digital Wallet.</Text>
+        <SafeAreaProvider style={ [styles.authWrapper,  Platform.OS === 'ios'? { paddingBottom: insets.bottom } : { paddingBottom: 10 }, ] } >
+            <Link href={{ pathname: "/(onboarding)\register" }} asChild style={{ backgroundColor: 'rgb(184, 0, 0)' }}>
+                <TouchableOpacity style={styles.authBtn} activeOpacity={0.7} >
+                  <Text style={ styles.authBtnText } >Sign up</Text>
+                </TouchableOpacity>
+            </Link>
+            <Link href={{ pathname: "/(onboarding)\register" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
+                <TouchableOpacity style={ styles.authBtn } activeOpacity={0.7} >
+                  <Text style={ [styles.authBtnText, { color: Colors.light.text,  }] } >Login</Text>
+                </TouchableOpacity>
+            </Link>
+        </SafeAreaProvider>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    borderWidth: 2,
-    borderColor: 'red',
+    backgroundColor: 'white',
   }, 
-  Carouselcontainer: {
-    flex: 5,
-    marginBottom: 20,
-    marginLeft: 5,
-    marginRight: 5,
+  carouselcontainer: {
+    flex: 3,
   },
   authContainer: {
     flex: 1,
-  }
+    backgroundColor: Colors.light.background
+  },
+  authWrapper: {
+    flex: 1,
+  },
+  authBtn: {
+    width: '85%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 17,
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 27,
+  },
+  authBtnText: {
+    color: Colors.dark.text,
+    fontWeight: '600',
+    fontSize: 20,
+    fontFamily: 'PoppinsSemiBold',
+    width: '100%',
+    textAlign: 'center',
+  },
+
 
 })
