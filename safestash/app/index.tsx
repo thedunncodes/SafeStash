@@ -39,12 +39,12 @@ export default function Index() {
       </SafeAreaProvider>
       <View style={ styles.authContainer }>
         <SafeAreaProvider style={ [styles.authWrapper,  Platform.OS === 'ios'? { paddingBottom: insets.bottom } : { paddingBottom: 10 }, ] } >
-            <Link href={{ pathname: "/(onboarding)\register" }} asChild style={{ backgroundColor: 'rgb(184, 0, 0)' }}>
+            <Link href={{ pathname: "/(onboarding)/register" }} asChild style={{ backgroundColor: 'rgb(184, 0, 0)' }}>
                 <TouchableOpacity style={styles.authBtn} activeOpacity={0.7} >
                   <Text style={ styles.authBtnText } >Sign up</Text>
                 </TouchableOpacity>
             </Link>
-            <Link href={{ pathname: "/(onboarding)\register" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
+            <Link href={{ pathname: "/(onboarding)/register" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
                 <TouchableOpacity style={ styles.authBtn } activeOpacity={0.7} >
                   <Text style={ [styles.authBtnText, { color: Colors.light.text,  }] } >Login</Text>
                 </TouchableOpacity>
