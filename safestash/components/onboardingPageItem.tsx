@@ -1,58 +1,78 @@
-import { Text, Image, View, StyleSheet} from "react-native";
-import LinearGradient from 'react-native-linear-gradient';
+import { Text, Image, Dimensions, View, StyleSheet, Platform} from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import Colors from "@/constants/Colors";
 
-type OnboardingItem = {
+const { width: windowWidth } = Dimensions.get('window')
+const pad: number = 0
+
+export type OnboardingItem = {
     id: string,
-    images: string,
+    image: string,
     context: string,
 }
 
-const OnboardingPageItem = (props: OnboardingItem) => {
-    <View style={styles.container}>
-        <View style={styles.wrapper}>
-            <View style={styles.imageWrapper}>
-                <Image source={{ uri: props.images }} style={styles.image} />
-                <LinearGradient
-                    colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.3)']}
-                    style={styles.gradient}
-                />
+export const OnboardingPageItem = (item: OnboardingItem) => {
+    return (
+        <View style={styles.container}>
+            <View style={styles.wrapper}>
+                <View style={styles.imageWrapper}>
+                    <Image source={ typeof item.image === 'string'? { uri: item.image } : item.image } style={styles.image} />
+                </View>
             </View>
             <View style={styles.textWrapper} >
-                <Text style={styles.text} >${props.context}</Text>
+                <Text style={styles.text} >{item.context}</Text>
             </View>
+            <LinearGradient
+                colors={['rgba(237, 242, 244, 0)', 'rgba(237, 242, 244, .1)', 'rgba(237, 242, 244, 1)' ]}
+                style={styles.gradient}
+            />
         </View>
-    </View>
+    )
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: 40,
     },
     wrapper: {
-        flex: 1
+        height: '100%',
+        width: windowWidth - pad,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 2,
     },
     imageWrapper: {
-        flex: 5,
-        position: 'relative',
+        flex: 1,
+        width: windowWidth - pad,
     },
     textWrapper: {
-        flex: 1
+        flex: 1,
+        width: windowWidth - pad,
+        alignSelf: 'center',
+        padding: 10,
+        zIndex: 1
     },
     image: {
         width: '100%',
         height: '100%',
-        resizeMode: 'cover',
+        resizeMode: 'contain',
     },
     text: {
-        fontSize: 30,
+        fontSize: windowWidth > 390? 27 : 22,
         color: Colors.light.text,
+        fontFamily: 'San Serif',
+        fontWeight: '900',
+        textAlign: 'center',
+        flex: 1,
+        marginTop: windowWidth > 390? 35 : 40,
+
     },
     gradient: {
         position: 'absolute',
         left: 0,
         right: 0,
         bottom: 0,
-        height: '20%',
+        height: '75%',
       }
 
 })
