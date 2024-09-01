@@ -4,6 +4,7 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" />
+      <Stack.Screen name="(onboarding)/register" options={{ title: 'Register' }} />
     </Stack>
   );
 }
