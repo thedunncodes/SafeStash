@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     text: {
-        fontSize: windowWidth > 390? 27 : 22,
+        fontSize: windowWidth > 390? 27 : 21.5,
         color: Colors.light.text,
-        fontFamily: 'San Serif',
+        fontFamily: 'PoppinsExtraBold',
         fontWeight: '900',
         textAlign: 'center',
         flex: 1,
