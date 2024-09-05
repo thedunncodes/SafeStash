@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Colors from '@/constants/Colors';
 import { View, Text, TextInput, Button, StyleSheet, type ViewProps, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, } from 'react-native';
 import CountryCodePicker from './countryCodePicker';
-import { string } from 'prop-types';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface InputProps extends ViewProps {
     placeholder?: string ,
@@ -15,14 +15,24 @@ interface InputProps extends ViewProps {
 }
 
 export default function FormInput({ placeholder, onChangeText, codeValue, value, style, type, secureText, keyboardType, ...rest}: InputProps ) {
-    const [countryCode, setCountryCode] = useState('code');
-    const [show, setShow] = useState(false);
+    const [showEye, setShowEye] = useState(false);
+    const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
 
     let codeValueTemp: string = '';
     if (type === 'code') {
         codeValueTemp = `${codeValue}`
-    } 
+    };
+
+    const toggleEye = () => {
+        if (showEye) {
+            setShowEye(false);
+            setPassShow(true)
+        } else {
+            setShowEye(true);
+            setPassShow(false);
+        }
+    }
 
     return(
         <View style={ styles.container } >
@@ -37,10 +47,15 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
                 value={value}
                 onChangeText={onChangeText}
                 style={[styles.input, style]}
-                secureTextEntry={secureText}
+                secureTextEntry={passShow}
                 autoCorrect={false}
                 keyboardType={keyboardType}
             />
+            <TouchableOpacity onPress={toggleEye} style={{ display: type === 'password'? 'flex' : 'none' }} >
+               <Icon name='eye-slash' size={25} color={Colors.light.text} style={{ display: showEye? 'none' : 'flex' }} />
+               <Icon name='eye' size={25} color={Colors.light.text} style={{ display: showEye? 'flex' : 'none' }} />
+            </TouchableOpacity>
+
         </View>
     )
 }
