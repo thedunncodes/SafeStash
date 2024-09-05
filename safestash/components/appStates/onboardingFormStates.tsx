@@ -11,6 +11,8 @@ type AppStateContextType = {
   setMobileNumber: React.Dispatch<React.SetStateAction<string>>;
   countryCode: string;
   setCountryCode: React.Dispatch<React.SetStateAction<string>>;
+  password: string;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -21,6 +23,8 @@ export const StateProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>('');
   const [mobileNumber, setMobileNumber] = useState<string>('');
   const [countryCode, setCountryCode] = useState<string>('+--');
+  const [password, setPassword] = useState<string>('');
+
 
   return (
     <AppStateContext.Provider value={{
@@ -33,7 +37,9 @@ export const StateProvider = ({ children }: { children: ReactNode }) => {
         mobileNumber,
         setMobileNumber,
         countryCode,
-        setCountryCode
+        setCountryCode,
+        password,
+        setPassword,
     }}>
       {children}
     </AppStateContext.Provider>
