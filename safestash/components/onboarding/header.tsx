@@ -1,6 +1,6 @@
 import React from 'react';
 import Colors from '@/constants/Colors';
-import { View, Text, Platform, StyleSheet, StatusBar, type ViewProps } from 'react-native';
+import { View, Text, StyleSheet, type ViewProps } from 'react-native';
 
 interface HeaderProps extends ViewProps {
     // children: React.ReactNode;
