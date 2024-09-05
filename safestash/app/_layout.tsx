@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
-import { useFonts } from 'expo-font'
+import { useFonts } from 'expo-font';
+import { StateProvider } from "@/components/appStates/onboardingFormStates";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -10,9 +11,11 @@ export default function RootLayout() {
   });
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(onboarding)" options={{ title: 'Register' }} />
-    </Stack>
+    <StateProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(onboarding)" options={{ title: 'Register' }} />
+      </Stack>
+    </StateProvider>
   );
 }
