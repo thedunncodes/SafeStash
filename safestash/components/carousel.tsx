@@ -74,6 +74,7 @@ export default function Carousel({ data }: CarouselProps) {
                 snapToAlignment="start"
                 showsHorizontalScrollIndicator={false}
                 disableIntervalMomentum={true}
+                initialNumToRender={3} 
             />
         </View>
     )

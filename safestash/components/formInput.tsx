@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Colors from '@/constants/Colors';
-import { View, Text, TextInput, Button, StyleSheet, type ViewProps, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, } from 'react-native';
+import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, } from 'react-native';
 import CountryCodePicker from './countryCodePicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DatePicker from '@/components/datePicker';
 
 interface InputProps extends ViewProps {
     placeholder?: string ,
     onChangeText?: (text: string) => void,
+    
     value: string,
     codeValue?: string,
     type: 'default' | 'password' | 'email' | 'number' | 'date' | 'country' | 'code',
@@ -18,6 +20,7 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
     const [showEye, setShowEye] = useState(false);
     const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
+    const [date, setDate] = useState<Date>()
 
     let codeValueTemp: string = '';
     if (type === 'code') {
@@ -50,19 +53,28 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
                 secureTextEntry={passShow}
                 autoCorrect={false}
                 keyboardType={keyboardType}
+                onFocus={() => {
+                    if(type === 'date') {
+                        Keyboard.dismiss()
+                        console.log('yes')
+                    }
+                }}
             />
             <TouchableOpacity onPress={toggleEye} style={{ display: type === 'password'? 'flex' : 'none' }} >
                <Icon name='eye-slash' size={25} color={Colors.light.text} style={{ display: showEye? 'none' : 'flex' }} />
                <Icon name='eye' size={25} color={Colors.light.text} style={{ display: showEye? 'flex' : 'none' }} />
             </TouchableOpacity>
 
+            <DatePicker style={{ display: type === 'date'? 'flex' : 'none' }} />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        height: 'auto'
+        height: 80,
+        // backgroundColor: 'blue',
+        marginBottom: 10,
     },
     input: {
         paddingTop: 5,
