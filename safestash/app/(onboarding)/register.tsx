@@ -1,14 +1,27 @@
 import { Text, View, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigation, Link } from "expo-router";
 import Colors from '@/constants/Colors';
 import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
 import FormInput from '@/components/formInput';
 import { useAppState } from '@/components/appStates/onboardingFormStates';
+import DatePicker from '@/components/datePicker';
 
 export default function Reg() {
-    const { firstName, setFirstName, countryCode, mobileNumber, setMobileNumber} = useAppState()
+    const { firstName,
+        setFirstName,
+        countryCode,
+        mobileNumber,
+        setMobileNumber,
+        password,
+        setPassword,
+        date,
+        setDate,
+        dateField,
+        setDateField,
+    } = useAppState()
+    
 
     return (
         <BodyView style={styles.body}>
@@ -23,7 +36,14 @@ export default function Reg() {
                 <View style={{ flex: 1 }}>
                     <FormInput placeholder='test1' secureText={false} onChangeText={setFirstName} value={firstName} type='default' keyboardType='default' />
                     <FormInput placeholder='Country Code' secureText={false} onChangeText={setMobileNumber} type='code' value={mobileNumber} codeValue={countryCode} keyboardType='numeric' />
-                    <View><Text> Results: Hello {firstName} from {countryCode} your number is {countryCode} {mobileNumber} </Text></View>
+                    <FormInput placeholder='password' secureText={true}  onChangeText={setPassword} type='password' value={password} keyboardType='default' />
+                    <FormInput placeholder='DD-MM-YY' secureText={false} type='date' value={dateField} keyboardType='default' />
+
+                    <View>
+                        <Text>
+                            Results: Hello {firstName} from {countryCode} your number is {countryCode} {mobileNumber}. password {password}. Todays date is {date.toDateString()}
+                        </Text>
+                    </View>
                 </View>
             </TouchableWithoutFeedback>
         </BodyView>
