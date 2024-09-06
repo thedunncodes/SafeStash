@@ -56,7 +56,6 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
                 onFocus={() => {
                     if(type === 'date') {
                         Keyboard.dismiss()
-                        console.log('yes')
                     }
                 }}
             />
