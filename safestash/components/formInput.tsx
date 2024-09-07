@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Colors from '@/constants/Colors';
-import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, } from 'react-native';
+import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, StyleProp, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, ViewStyle, } from 'react-native';
 import CountryCodePicker from './countryCodePicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from '@/components/datePicker';
+import { useAppState } from './appStates/onboardingFormStates';
 
 interface InputProps extends ViewProps {
     placeholder?: string ,
     onChangeText?: (text: string) => void,
-    
+    containerStyle?: StyleProp<ViewStyle>,
     value: string,
     codeValue?: string,
-    type: 'default' | 'password' | 'email' | 'number' | 'date' | 'country' | 'code',
+    type: 'default' | 'password' | 'email' | 'date' | 'code',
     secureText?: boolean,
     keyboardType: 'email-address' | 'numeric' | 'default',
 }
 
-export default function FormInput({ placeholder, onChangeText, codeValue, value, style, type, secureText, keyboardType, ...rest}: InputProps ) {
+export default function FormInput({ placeholder, onChangeText, codeValue, value, containerStyle, style, type, secureText, keyboardType, ...rest}: InputProps ) {
     const [showEye, setShowEye] = useState(false);
     const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
     const [date, setDate] = useState<Date>()
+    const { errors, setErrors } = useAppState()
 
     let codeValueTemp: string = '';
     if (type === 'code') {
@@ -38,27 +40,42 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
     }
 
     return(
-        <View style={ styles.container } >
+        <View style={ [styles.container, containerStyle] } >
             <CountryCodePicker 
             showModal={false}
             defaultValue={codeValueTemp}
-            style={{ borderWidth: 1, width: 50, display: type === 'code'? 'flex' : 'none' }} />
+            style={{ justifyContent: 'center', alignItems: 'center', width: 51, display: type === 'code'? 'flex' : 'none' }} />
 
-            <TextInput
-                placeholder={placeholder}
-                placeholderTextColor={'rgba(25, 25, 25, .5)'}
-                value={value}
-                onChangeText={onChangeText}
-                style={[styles.input, style]}
-                secureTextEntry={passShow}
-                autoCorrect={false}
-                keyboardType={keyboardType}
-                onFocus={() => {
-                    if(type === 'date') {
-                        Keyboard.dismiss()
-                    }
-                }}
-            />
+            <View style={[styles.input, style]}>
+                <TextInput
+                    placeholder={placeholder}
+                    placeholderTextColor={'rgba(25, 25, 25, .5)'}
+                    value={value}
+                    onChangeText={(text) => {
+                        if (onChangeText) onChangeText(text);
+                        if ( type === 'code' ) {
+                            errors.code? errors.code = undefined : undefined;
+                            errors.mobileNumber? errors.mobileNumber = undefined : undefined;
+                        }
+                        // If blocks should be updated as errors to be validated increases and
+                        // how they fit into available types
+                        if (type === 'default') {
+                            errors.email? errors.email = undefined : undefined;
+                        }
+                        
+                    }}
+                    style={{ color: Colors.light.text, flex: 1, }}
+                    secureTextEntry={passShow}
+                    autoCorrect={false}
+                    keyboardType={keyboardType}
+                    maxLength={type === 'code'? 17 : undefined}
+                    onFocus={() => {
+                        if(type === 'date') {
+                            Keyboard.dismiss()
+                        }
+                    }}
+                />
+            </View>
             <TouchableOpacity onPress={toggleEye} style={{ display: type === 'password'? 'flex' : 'none' }} >
                <Icon name='eye-slash' size={25} color={Colors.light.text} style={{ display: showEye? 'none' : 'flex' }} />
                <Icon name='eye' size={25} color={Colors.light.text} style={{ display: showEye? 'flex' : 'none' }} />
@@ -71,20 +88,14 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
 
 const styles = StyleSheet.create({
     container: {
-        height: 80,
+        height: 75,
         // backgroundColor: 'blue',
-        marginBottom: 10,
     },
     input: {
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 2,
         borderWidth: 1,
         borderColor: 'rgba(25,25,25,0.3)',
-        elevation: 5,
-        height: 35,
+        // elevation: 5,
+        height: 55,
         width: '100%',
     }
 })
-
-// /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
