@@ -1,8 +1,8 @@
-import { Client } from 'pg';
+import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const client = new Client({
+const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
@@ -11,12 +11,4 @@ const client = new Client({
 
 });
 
-client.connect((err) => {
-  if (err) {
-    console.error('Connection Error', err.stack);
-  } else {
-    console.log('Connected');
-  }
-});
-
-module.exports = client;
+module.exports = pool;
