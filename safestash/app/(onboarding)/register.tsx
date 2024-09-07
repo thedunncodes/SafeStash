@@ -1,4 +1,4 @@
-import { Text, View, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard } from 'react-native';
+import { Text, View, Platform, TouchableWithoutFeedback, TouchableOpacity, StyleSheet, Keyboard, KeyboardAvoidingView, StatusBar } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useNavigation, Link } from "expo-router";
 import Colors from '@/constants/Colors';
@@ -6,46 +6,102 @@ import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
 import FormInput from '@/components/formInput';
 import { useAppState } from '@/components/appStates/onboardingFormStates';
-import DatePicker from '@/components/datePicker';
+import { formValidation } from '@/components/appStates/onboardingFormStates';
 
 export default function Reg() {
-    const { firstName,
-        setFirstName,
+    const {
+        email,
+        setEmail,
         countryCode,
         mobileNumber,
         setMobileNumber,
-        password,
-        setPassword,
-        date,
-        setDate,
-        dateField,
-        setDateField,
+        setCountryCode,
+        errors,
+        setErrors
     } = useAppState()
+
+    const ValidateForm = () => {
+        let errors: formValidation = {}
+        const email_exp = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+        const mobile_exp = /^[0-9]+$/
+
+        if (!(email_exp.test(email))) errors.email = 'Valid email required'
+        if (countryCode === '+_ _') errors.code = 'Please select your country code'
+        // Backend validation required, for now lets use a dummy
+        if (!(mobile_exp.test(mobileNumber))) errors.mobileNumber = 'Input a valid phone number'
+
+        setErrors(errors)
+
+        return Object.keys(errors).length === 0
+    }
+
+    const handleSubmit = () => {
+        if (ValidateForm()) {
+            console.log('Submitted:\nEmail: ', email, ' Phone Number: ', countryCode, mobileNumber)
+            setEmail('')
+            setMobileNumber('')
+            setCountryCode('+_ _')
+        }
+    } 
     
 
     return (
         <BodyView style={styles.body}>
             <View style={ styles.loginReroute } >
-                <Text style={ styles.loginRerouteText } >Already have an account?<Link href={{ pathname: "/" }}> Login</Link></Text>
+                <Text style={ styles.loginRerouteText } >Already have an account? </Text>
+                <View style={ styles.loginRerouteLink } ><Link href={{ pathname: "/" }} style={ styles.loginRerouteText } >Login</Link></View>
             </View>
             <Header>
                 Let's Create your account
             </Header>
             <Text style={styles.infoSection} >Please input your E-mail and phone number to begin the process </Text>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ flex: 1 }}>
-                    <FormInput placeholder='test1' secureText={false} onChangeText={setFirstName} value={firstName} type='default' keyboardType='default' />
-                    <FormInput placeholder='Country Code' secureText={false} onChangeText={setMobileNumber} type='code' value={mobileNumber} codeValue={countryCode} keyboardType='numeric' />
-                    <FormInput placeholder='password' secureText={true}  onChangeText={setPassword} type='password' value={password} keyboardType='default' />
-                    <FormInput placeholder='DD-MM-YY' secureText={false} type='date' value={dateField} keyboardType='default' />
-
+                <View style={ styles.formBody }>
                     <View>
-                        <Text>
-                            Results: Hello {firstName} from {countryCode} your number is {countryCode} {mobileNumber}. password {password}. Todays date is {date.toDateString()}
-                        </Text>
+                        <View style={styles.label} >
+                            <Text style={styles.labelText} >Email address </Text>
+                        </View>
+                        <FormInput
+                            placeholder='Enter your email address'
+                            secureText={false} 
+                            onChangeText={setEmail}
+                            value={email}
+                            type='default'
+                            keyboardType='email-address'
+                            style={ styles.normalInput }
+                        />
+                        {
+                            errors.email ? <View style={ styles.errorView } ><Text style={ styles.errorText } >{errors.email}</Text></View> : null
+                        }
+
+                        <View style={styles.label} >
+                            <Text style={styles.labelText} >Phone Number</Text>
+                        </View>
+                        <FormInput
+                            placeholder='_ _ _ _ _ _ _ _ _ _'
+                            secureText={false}
+                            onChangeText={setMobileNumber}
+                            type='code'
+                            value={mobileNumber}
+                            codeValue={countryCode}
+                            keyboardType='numeric'
+                            style={ styles.countryCodeInput }
+                            containerStyle={ styles.inputContainer }
+                        />
+                        {
+                            errors.code || errors.mobileNumber ? <View style={ styles.errorView } >
+                                        {errors.code? <Text style={ styles.errorText } >{errors.code}</Text> : null}
+                                        {errors.mobileNumber ? <Text style={ styles.errorText } >{errors.mobileNumber}</Text> : null}
+                                    </View> : null
+                        }
                     </View>
                 </View>
             </TouchableWithoutFeedback>
+            <View>
+                <TouchableOpacity style={ styles.submitBody } onPress={handleSubmit} >
+                    <Text style={ styles.submitBodyText } >Verify</Text>
+                </TouchableOpacity>
+            </View>
         </BodyView>
     )
 }
@@ -53,20 +109,95 @@ export default function Reg() {
 const styles = StyleSheet.create({
     body: {
         padding: 12,
+        flex: 0,
+        height: '100%',
         backgroundColor: Colors.light.background,
+    },
+    formBody: {
+        height: Platform.OS === 'ios'? '60%' : 450,
+    },
+    submitBody: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 60,
+        borderRadius: 15,
+        backgroundColor: Colors.light.darkRed,
+    },
+    submitBodyText: {
+        fontSize: 23,
+        fontFamily: 'Poppins-SemiBold',
+        color: 'white'
+    },
+    normalInput: {
+        // backgroundColor: 'red',
+        justifyContent: 'center',
+        paddingLeft: 7,
+        paddingRight: 2,
+        borderRadius: 5,
+        borderColor: 'rgba(25,25,25,0.6)',
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        height: 55,
+        alignItems: 'stretch',
+        borderWidth: 1,
+        borderColor: 'rgba(25,25,25,0.6)',
+        borderRadius: 5,
+        marginBottom: 15
+    },
+    countryCodeInput: {
+        width: '86%',
+        justifyContent: 'center',
+        paddingLeft: 7,
+        paddingRight: 2,
+        borderLeftWidth: 1,
+        borderRightWidth: 0,
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        alignSelf: 'flex-end',
+        height: 54,
+        borderColor: 'rgba(25,25,25,0.5)',
+    },
+    label: {
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    labelText: {
+        color: Colors.light.text,
+        fontFamily: 'Poppins-Medium',
+        fontSize: 15,
     },
     infoSection: {
         fontFamily: 'PoppinsMedium',
         fontSize: 12.5,
         marginTop: 5,
         lineHeight: 20,
+        marginBottom: 20,
     },
     loginReroute: {
         marginTop: 10,
         marginBottom: 25,
-        alignItems: 'flex-end',
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     loginRerouteText: {
         fontSize: 12,
-    }
+    },
+    loginRerouteLink: {
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.light.red,
+        position: 'relative',
+    },
+    errorView: {
+        borderBottomWidth: .5,
+        borderBottomColor: Colors.light.red,
+        height: 'auto',
+        // backgroundColor: 'grey',
+        marginBottom: 1,
+    },
+    errorText: {
+        fontSize: 12,
+        padding: 1,
+        textAlign: 'center'
+    },
 })
