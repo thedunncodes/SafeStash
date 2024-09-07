@@ -47,8 +47,8 @@ const CountryCodePicker = ({ defaultValue, showModal, style }: CountryCodePicker
 
   return (
         <View style={style} >
-            <TouchableOpacity onPress={() => {setModalVisible(true)} }>
-                <Text>{defaultValue}</Text>
+            <TouchableOpacity style={ styles.codePickerBtn } onPress={() => {setModalVisible(true)} }>
+                <Text >{defaultValue}</Text>
             </TouchableOpacity>
             <Modal 
                 visible={modalVisible}
@@ -112,6 +112,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Medium'
 
+  },
+  codePickerBtn: {
+    width: '100%',
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center'
   },
 });
 
