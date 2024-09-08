@@ -1,6 +1,7 @@
 import { Text, View, Platform, TouchableWithoutFeedback, TouchableOpacity, StyleSheet, Keyboard, KeyboardAvoidingView, StatusBar } from 'react-native';
 import { useEffect, useState } from 'react';
-import { useNavigation, Link } from "expo-router";
+import { Link, router } from "expo-router";
+import axios from 'axios';
 import Colors from '@/constants/Colors';
 import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
@@ -37,11 +38,29 @@ export default function Reg() {
 
     const handleSubmit = () => {
         if (ValidateForm()) {
+            try {
+                axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`})
+                    .then(response => {
+                        console.log(response.status)
+                        router.push('/verification')
+                    })
+                    .catch((err) => {
+                        console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
+                        if (err.response.data.message === 'Invalid Phone number') {
+                            errors.mobileNumber = 'Input a valid phone number'
+                            setErrors(errors)
+                        }
+                    })
+            } catch(err) {
+                console.error('Verification failed', err)
+            }
+            
             console.log('Submitted:\nEmail: ', email, ' Phone Number: ', countryCode, mobileNumber)
             setEmail('')
             setMobileNumber('')
             setCountryCode('+_ _')
         }
+
     } 
     
 
@@ -129,7 +148,6 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     normalInput: {
-        // backgroundColor: 'red',
         justifyContent: 'center',
         paddingLeft: 7,
         paddingRight: 2,
