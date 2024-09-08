@@ -4,6 +4,7 @@ export default function OnboardingLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="register" options={{ title: 'Register' }} />
+      <Stack.Screen name="verification" options={{ title: 'Verification' }} />
     </Stack>
   );
 }
