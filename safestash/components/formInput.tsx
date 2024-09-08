@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Colors from '@/constants/Colors';
-import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, StyleProp, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, ViewStyle, } from 'react-native';
+import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, StyleProp, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, ViewStyle, TextStyle, } from 'react-native';
 import CountryCodePicker from './countryCodePicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from '@/components/datePicker';
@@ -10,14 +10,23 @@ interface InputProps extends ViewProps {
     placeholder?: string ,
     onChangeText?: (text: string) => void,
     containerStyle?: StyleProp<ViewStyle>,
+    textStyle?: StyleProp<TextStyle>,
     value: string,
     codeValue?: string,
     type: 'default' | 'password' | 'email' | 'date' | 'code',
     secureText?: boolean,
     keyboardType: 'email-address' | 'numeric' | 'default',
+    maxLength?: number
 }
 
-export default function FormInput({ placeholder, onChangeText, codeValue, value, containerStyle, style, type, secureText, keyboardType, ...rest}: InputProps ) {
+export default function FormInput({
+        placeholder, onChangeText,
+        codeValue, value,
+        containerStyle, style,
+        type, secureText,
+        keyboardType, maxLength,
+        textStyle, ...rest
+    }: InputProps ) {
     const [showEye, setShowEye] = useState(false);
     const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
@@ -64,11 +73,11 @@ export default function FormInput({ placeholder, onChangeText, codeValue, value,
                         }
                         
                     }}
-                    style={{ color: Colors.light.text, flex: 1, }}
+                    style={[{ color: Colors.light.text, flex: 1, }, textStyle]}
                     secureTextEntry={passShow}
                     autoCorrect={false}
                     keyboardType={keyboardType}
-                    maxLength={type === 'code'? 17 : undefined}
+                    maxLength={type === 'code'? 17 : maxLength || undefined}
                     onFocus={() => {
                         if(type === 'date') {
                             Keyboard.dismiss()
