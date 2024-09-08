@@ -12,6 +12,7 @@ export default function RootLayout() {
     PoppinsBold: require('../assets/fonts/Poppins-Bold.ttf'),
     PoppinsExtraBold: require('../assets/fonts/Poppins-ExtraBold.ttf'),
     PoppinsMedium: require('../assets/fonts/Poppins-Medium.ttf'),
+    PoppinsRegular: require('../assets/fonts/Poppins-Regular.ttf'),
   });
 
   async function Prepare() {
@@ -35,7 +36,7 @@ export default function RootLayout() {
     <StateProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="(onboarding)" options={{ title: 'Register' }} />
+        <Stack.Screen name="(onboarding)" options={{ title: 'Onboarding' }} />
       </Stack>
     </StateProvider>
   );
