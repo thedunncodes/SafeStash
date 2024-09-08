@@ -11,4 +11,21 @@ const pool = new Pool({
 
 });
 
+async function createTables() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS account(
+      account_id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL,
+      first_name VARCHAR(30),
+      given_names VARCHAR(80),
+      phone_number VARCHAR(22),
+      email VARCHAR(30)
+      );
+    `);
+
+  console.log('Database tables setup');
+}
+
+createTables();
+
 module.exports = pool;
