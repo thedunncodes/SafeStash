@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FormInput from "@/components/formInput";
 import Colors from "@/constants/Colors";
 import NumToTime from "@/hooks/numToTime";
+import BackBtn from "@/components/backBtn";
 
 export default function Verify() {
     const [countdown, setCountdown] = useState(90);
@@ -47,9 +48,9 @@ export default function Verify() {
 
         // once the codes OTPs are verified and matched clean the states here
 
-        // router.push()
         setIsActive(true)
         setSubmitted(true)
+        router.push('/userData')
     }
 
     return (
@@ -60,73 +61,66 @@ export default function Verify() {
                     keyboardVerticalOffset={-30}
                     style={ styles.body }
                 >
-                    {/* <View> */}
-                        <View style={styles.backBtn} >
-                            <Link href={{ pathname: "/register" }} style={{ paddingTop: 3, width: 16, }} >
-                                <Icon name="chevron-left" size={16} style={{ color: Colors.light.red, paddingTop: 3.6, height: '100%' }} />
-                            </Link>
-                            <Text style={styles.backBtnText} >Back</Text>
+                    <BackBtn pathname="/register" />
+                    <Header style={ styles.header } >Verify your E-mail address and Phone number</Header>
+                    <View style={styles.verificationContainer}  >
+                        <View style={ styles.infoTextVIew } >
+                            <Text style={styles.infoText} >
+                                Input the 6 digit OTP sent to your email and phone number
+                            </Text>
                         </View>
-                        <Header style={ styles.header } >Verify your E-mail address and Phone number</Header>
-                        <View style={styles.verificationContainer}  >
-                            <View style={ styles.infoTextVIew } >
-                                <Text style={styles.infoText} >
-                                    Input the 6 digit OTP sent to your email and phone number
-                                </Text>
-                            </View>
-                            <View style={styles.labelView} >
-                                <Text style={ styles.labelViewText } >
-                                    Enter your email OTP.
-                                </Text>
-                            </View>
-                            <FormInput
-                                placeholder="_ _ _ _ _ _"
-                                type="default" secureText={false}
-                                onChangeText={setEmailOtp}
-                                keyboardType="numeric"
-                                value={emailOtp}
-                                maxLength={6}
-                                textStyle={ styles.inputTextStyle }
-                                style={ styles.inputStyle }
-                                containerStyle={ styles.inputContainer }
-                            />
-                            <View style={styles.labelView} >
-                                <Text style={ styles.labelViewText } >
-                                    Enter your phone number OTP.
-                                </Text>
-                            </View>
-                            <FormInput
-                                placeholder="_ _ _ _ _ _"
-                                type="default" secureText={false}
-                                onChangeText={setMobileOtp}
-                                keyboardType="numeric"
-                                value={mobileOtp}
-                                maxLength={6}
-                                textStyle={ styles.inputTextStyle }
-                                style={ styles.inputStyle }
-                                containerStyle={ styles.inputContainer }
-                            />
-                            <View>
-                                <TouchableOpacity
-                                    disabled={isActive && submitted? true : false}
-                                    onPress={handleResend}
-                                    style={ styles.resendView }
-                                >
-                                    <Text style={ styles.resendViewText } >
-                                        {isActive
-                                            ? `Resend Code (${NumToTime(countdown)}s)`
-                                            : 'Resend Code'
-                                        }
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={styles.labelView} >
+                            <Text style={ styles.labelViewText } >
+                                Enter your email OTP.
+                            </Text>
                         </View>
-                        <View style={ styles.submitViewContainer } >
-                            <TouchableOpacity style={styles.submitView} onPress={handleSubmit} >
-                                <Text style={styles.submitViewText} >Submit</Text>
+                        <FormInput
+                            placeholder="_ _ _ _ _ _"
+                            type="default" secureText={false}
+                            onChangeText={setEmailOtp}
+                            keyboardType="numeric"
+                            value={emailOtp}
+                            maxLength={6}
+                            textStyle={ styles.inputTextStyle }
+                            style={ styles.inputStyle }
+                            containerStyle={ styles.inputContainer }
+                        />
+                        <View style={styles.labelView} >
+                            <Text style={ styles.labelViewText } >
+                                Enter your phone number OTP.
+                            </Text>
+                        </View>
+                        <FormInput
+                            placeholder="_ _ _ _ _ _"
+                            type="default" secureText={false}
+                            onChangeText={setMobileOtp}
+                            keyboardType="numeric"
+                            value={mobileOtp}
+                            maxLength={6}
+                            textStyle={ styles.inputTextStyle }
+                            style={ styles.inputStyle }
+                            containerStyle={ styles.inputContainer }
+                        />
+                        <View>
+                            <TouchableOpacity
+                                disabled={isActive && submitted? true : false}
+                                onPress={handleResend}
+                                style={ styles.resendView }
+                            >
+                                <Text style={ styles.resendViewText } >
+                                    {isActive
+                                        ? `Resend Code (${NumToTime(countdown)}s)`
+                                        : 'Resend Code'
+                                    }
+                                </Text>
                             </TouchableOpacity>
                         </View>
-                    {/* </View> */}
+                    </View>
+                    <View style={ styles.submitViewContainer } >
+                        <TouchableOpacity style={styles.submitView} onPress={handleSubmit} >
+                            <Text style={styles.submitViewText} >Submit</Text>
+                        </TouchableOpacity>
+                    </View>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         </BodyView>
@@ -143,14 +137,6 @@ const styles = StyleSheet.create({
         width: '100%',
         lineHeight: 33,
         fontSize: 21,
-    },
-    backBtn: {
-        marginLeft: 5,
-        marginBottom: 25,
-        flexDirection: 'row',
-    },
-    backBtnText: {
-        fontSize: 17,
     },
     infoTextVIew: {
         marginBottom: 10,
@@ -202,7 +188,7 @@ const styles = StyleSheet.create({
     },
     labelViewText: {
         fontFamily: 'Poppins-Regular',
-        fontSize: 12
+        fontSize: 13
     },
     resendView: {
         borderBottomWidth: .5,
