@@ -7,6 +7,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="verification" options={{ title: 'Verification' }} />
       <Stack.Screen name="userData" options={{ title: 'Profile Data' }} />
       <Stack.Screen name="personalization" options={{ title: 'Personalization' }} />
+      <Stack.Screen name="password" options={{ title: 'Password' }} />
     </Stack>
   );
 }
