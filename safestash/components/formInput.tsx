@@ -9,16 +9,16 @@ import CountryPicker from './countryPicker';
 import OccupationPicker from './onboarding/occupationPicker';
 
 interface InputProps extends ViewProps {
-    placeholder?: string ,
-    onChangeText?: (text: string) => void,
-    containerStyle?: StyleProp<ViewStyle>,
-    textStyle?: StyleProp<TextStyle>,
-    value: string,
-    codeValue?: string,
-    type: 'default' | 'password' | 'email' | 'date' | 'code' | 'country' | 'job',
-    secureText?: boolean,
-    keyboardType: 'email-address' | 'numeric' | 'default',
-    maxLength?: number
+    placeholder?: string ;
+    onChangeText?: (text: string) => void;
+    containerStyle?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
+    value: string;
+    codeValue?: string;
+    type: 'default' | 'password' | 'email' | 'date' | 'code' | 'country' | 'job';
+    secureText?: boolean;
+    keyboardType: 'email-address' | 'numeric' | 'default';
+    maxLength?: number;
 }
 
 export default function FormInput({
@@ -33,7 +33,7 @@ export default function FormInput({
     const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
     const [date, setDate] = useState<Date>()
-    const { errors, setErrors, occupation, country } = useAppState()
+    const { errors, setErrors, occupation, country, givenName, lastName } = useAppState()
 
     let codeValueTemp: string = '';
     if (type === 'code') {
@@ -49,6 +49,7 @@ export default function FormInput({
             setPassShow(false);
         }
     }
+
 
     return(
         <View style={ [styles.container, containerStyle] } >
@@ -68,10 +69,16 @@ export default function FormInput({
                             errors.code? errors.code = undefined : undefined;
                             errors.mobileNumber? errors.mobileNumber = undefined : undefined;
                         }
-                        // If blocks should be updated as errors to be validated increases and
-                        // how they fit into available types
+
                         if (type === 'default') {
                             errors.email? errors.email = undefined : undefined;
+                            givenName.length > 0? errors.givenName = undefined : undefined;
+                            lastName.length > 0? errors.lastName = undefined : undefined;
+                        }
+
+                        if (type === 'password') {
+                            errors.confirmPass? errors.confirmPass = undefined : undefined;
+                            errors.minPassword? errors.minPassword = undefined : undefined;
                         }
                         
                     }}
@@ -87,7 +94,7 @@ export default function FormInput({
                     }}
                 />
             </View>
-            <TouchableOpacity onPress={toggleEye} style={{ display: type === 'password'? 'flex' : 'none' }} >
+            <TouchableOpacity onPress={toggleEye} style={{ justifyContent: 'center', alignItems: 'center', width: 51, display: type === 'password'? 'flex' : 'none' }} >
                <Icon name='eye-slash' size={25} color={Colors.light.text} style={{ display: showEye? 'none' : 'flex' }} />
                <Icon name='eye' size={25} color={Colors.light.text} style={{ display: showEye? 'flex' : 'none' }} />
             </TouchableOpacity>
@@ -112,12 +119,10 @@ export default function FormInput({
 const styles = StyleSheet.create({
     container: {
         height: 75,
-        // backgroundColor: 'blue',
     },
     input: {
         borderWidth: 1,
         borderColor: 'rgba(25,25,25,0.3)',
-        // elevation: 5,
         height: 55,
         width: '100%',
     }

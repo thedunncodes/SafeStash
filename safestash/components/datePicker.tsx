@@ -13,7 +13,7 @@ interface DatePickerProps extends ViewProps{
 const DatePicker = ({ defaultDate, style }: DatePickerProps) => {
   const [show, setShow] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { date, setDate, setDateField } = useAppState()
+  const { date, setDate, setDateField, errors } = useAppState()
 
   const formatDate = (date: Date): string => {
     const day = date.getDate().toString().padStart(2, '0');
@@ -28,6 +28,8 @@ const DatePicker = ({ defaultDate, style }: DatePickerProps) => {
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
     setDateField(formatDate(currentDate))
+    errors.dateField? errors.dateField = undefined : undefined;
+
   };
 
 

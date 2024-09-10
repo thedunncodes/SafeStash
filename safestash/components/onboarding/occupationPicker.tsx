@@ -65,6 +65,8 @@ const OccupationPicker = ({ defaultValue, showModal, style }: OccupationPickerPr
         setOccupation(item.value)
         setModalVisible(false)
         setToggleModal(false);
+        errors.occupation? errors.occupation = undefined : undefined;
+
     }} >
       <Text style={ itemStyles.itemBtn } >{item.label}</Text>
     </TouchableOpacity>

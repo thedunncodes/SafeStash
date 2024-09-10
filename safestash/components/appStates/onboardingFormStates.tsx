@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface formValidation {
-  email?: string,
-  code?: string,
-  mobileNumber?: string,
-  newJob?: string
+  email?: string;
+  code?: string;
+  mobileNumber?: string;
+  newJob?: string;
+  confirmPass?: string;
+  minPassword?: string;
+  lastName?: string;
+  givenName?: string;
+  country?: string;
+  dateField?: string;
+  occupation?: string;
 }
 
 type AppStateContextType = {
@@ -20,8 +27,6 @@ type AppStateContextType = {
   setCountryCode: React.Dispatch<React.SetStateAction<string>>;
   country: string;
   setCountry: React.Dispatch<React.SetStateAction<string>>;
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
   date: Date;
   setDate: React.Dispatch<React.SetStateAction<Date>>;
   dateField: string;
@@ -41,7 +46,6 @@ export const StateProvider = ({ children }: { children: ReactNode }) => {
   const [mobileNumber, setMobileNumber] = useState<string>('');
   const [countryCode, setCountryCode] = useState<string>('+_ _');
   const [country, setCountry] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [date, setDate] = useState<Date>(new Date())
   const [dateField, setDateField] = useState<string>('')
   const [occupation, setOccupation] = useState<string>('')
@@ -56,7 +60,6 @@ export const StateProvider = ({ children }: { children: ReactNode }) => {
         mobileNumber, setMobileNumber,
         countryCode, setCountryCode,
         country, setCountry,
-        password, setPassword,
         date, setDate,
         dateField, setDateField,
         errors, setErrors,

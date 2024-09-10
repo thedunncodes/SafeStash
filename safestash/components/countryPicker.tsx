@@ -20,7 +20,7 @@ const CountryPicker = ({ defaultValue, showModal, style }: CountryPickerProps) =
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(showModal);
   const [toggleModal, setToggleModal] = useState<boolean>(false)
-  const { setCountry } = useAppState()
+  const { setCountry, errors } = useAppState()
 
   const countryOptions: CountryItem[] = useMemo(() => {
     return countries.all
@@ -39,6 +39,8 @@ const CountryPicker = ({ defaultValue, showModal, style }: CountryPickerProps) =
         setCountry(item.value)
         setModalVisible(false)
         setToggleModal(false);
+        errors.country? errors.country = undefined : undefined;
+
     }} >
       <Text style={ itemStyles.itemBtn } >{item.label}</Text>
     </TouchableOpacity>

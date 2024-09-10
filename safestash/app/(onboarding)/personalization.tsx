@@ -33,7 +33,8 @@ export default function Personalize() {
 
     const handleSubmit = () => {
         // Check for form validation
-
+        // return the splice to the backend
+        console.log(tagList.slice(originalTagLength))
         router.navigate('/password')
     }
 
@@ -55,7 +56,7 @@ export default function Personalize() {
                                 e.g Vets, Restaurants, PetFood, Spotify, Groceries
                             </Text>
                         </View>
-                        
+                
                         <ScrollView
                             style={ styles.tagView }
                             nestedScrollEnabled={true}

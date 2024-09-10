@@ -1,21 +1,45 @@
+import { router } from 'expo-router';
 import {View, Text, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity} from 'react-native';
 import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
 import BackBtn from '@/components/backBtn';
-import { useAppState } from '@/components/appStates/onboardingFormStates';
+import { formValidation, useAppState } from '@/components/appStates/onboardingFormStates';
 import FormInput from '@/components/formInput';
 import Colors from '@/constants/Colors';
-import { router } from 'expo-router';
+import errorStyles from '@/constants/errorStyles';
 
 export default function Data() {
-    const { lastName, givenName, setLastName, setGivenName, dateField, country, occupation } = useAppState()
+    const {
+        lastName, givenName,
+        setLastName, setGivenName,
+        dateField, country,
+        occupation, errors,
+        setErrors
+    } = useAppState()
 
-    // Validate form function here
+    const ValidateForm = () => {
+        let errors: formValidation = {}
+
+        if (givenName === '') errors.givenName = 'First And Middle Name Required'
+        
+        if (lastName === '')  errors.lastName = "Last Name Required"
+
+        if (dateField === '')  errors.dateField = "Date Of Birth Required"
+
+        if (country === '')  errors.country = "Nationality Required"
+
+        if (occupation === '')  errors.occupation = "Occupation Required"
+
+        setErrors(errors)
+
+        return Object.keys(errors).length === 0
+    }
 
     const handleSubmit = () => {
         // Check for form validation
-
-        router.navigate('/personalization')
+        if (ValidateForm()) {
+            router.navigate('/personalization')
+        }
     }
 
     return(
@@ -47,6 +71,9 @@ export default function Data() {
                                 maxLength={40}
                                 style={ styles.normalInput }
                             />
+                            {
+                                errors.givenName ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.givenName}</Text></View> : null
+                            }
 
                             <View style={styles.labelView} >
                                 <Text style={ styles.labelViewText } >
@@ -63,6 +90,9 @@ export default function Data() {
                                 maxLength={25}
                                 style={ styles.normalInput }
                             />
+                            {
+                                errors.lastName ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.lastName}</Text></View> : null
+                            }
 
                             <View style={styles.labelView} >
                                 <Text style={ styles.labelViewText } >
@@ -79,6 +109,9 @@ export default function Data() {
                                 style={ styles.customInput }
                                 containerStyle={styles.mainInputContainer}                   
                             />
+                            {
+                                errors.dateField ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.dateField}</Text></View> : null
+                            }
 
                             <View style={styles.labelView} >
                                 <Text style={ styles.labelViewText } >
@@ -94,6 +127,9 @@ export default function Data() {
                                 style={ styles.customInput }
                                 containerStyle={styles.mainInputContainer}
                             />
+                            {
+                                errors.country ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.country}</Text></View> : null
+                            }
 
                             <View style={styles.labelView} >
                                 <Text style={ styles.labelViewText } >
@@ -109,6 +145,9 @@ export default function Data() {
                                 style={ styles.customInput }
                                 containerStyle={styles.mainInputContainer}
                             />
+                            {
+                                errors.occupation ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.occupation}</Text></View> : null
+                            }
                         </View>
 
                         <View style={ styles.submitContainer } >
@@ -126,7 +165,8 @@ export default function Data() {
 
 const styles = StyleSheet.create({
     body: {
-        padding: 5
+        padding: 5,
+        paddingBottom: 65
     },
     header: {
         fontSize: 29,
@@ -137,17 +177,18 @@ const styles = StyleSheet.create({
     },
     infoSectionView: {
         marginTop: 12,
-        marginBottom: 15,
+        marginBottom: 10,
     },
     infoSectionText: {
         fontFamily: 'Poppins-Medium',
         fontSize: 13
     },
     userInfoContainer: {
-        paddingLeft: 5,
+        padding: 15,
     },
     labelView: {
         marginBottom: 5,
+        marginTop: 10,
     },
     labelViewText: {
         fontFamily: 'Poppins-Regular',
@@ -182,7 +223,7 @@ const styles = StyleSheet.create({
     },
     submitContainer: {
         alignItems: 'center',
-        marginTop: 33,
+        marginTop: 45,
     },
     submitView: {
         width: '92%',

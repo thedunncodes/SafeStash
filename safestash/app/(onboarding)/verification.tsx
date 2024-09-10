@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Key
 import { Link, router } from "expo-router";
 import BodyView from "@/components/bodyView";
 import Header from "@/components/onboarding/header";
-import Icon from 'react-native-vector-icons/FontAwesome';
 import FormInput from "@/components/formInput";
 import Colors from "@/constants/Colors";
 import NumToTime from "@/hooks/numToTime";
