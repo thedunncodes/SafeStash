@@ -71,10 +71,11 @@ export default function FormInput({
                         }
 
                         if (type === 'default') {
-                            errors.email? errors.email = undefined : undefined;
                             givenName.length > 0? errors.givenName = undefined : undefined;
                             lastName.length > 0? errors.lastName = undefined : undefined;
                         }
+
+                        if ( type === 'email' ) errors.email? errors.email = undefined : undefined;
 
                         if (type === 'password') {
                             errors.confirmPass? errors.confirmPass = undefined : undefined;
