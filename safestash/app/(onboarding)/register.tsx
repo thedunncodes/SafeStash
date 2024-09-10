@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     },
     labelText: {
         color: Colors.light.text,
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'Poppins-Regular',
         fontSize: 15,
     },
     infoSection: {
@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: .5,
         borderBottomColor: Colors.light.red,
         height: 'auto',
-        // backgroundColor: 'grey',
         marginBottom: 1,
     },
     errorText: {
