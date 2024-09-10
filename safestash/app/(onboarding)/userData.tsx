@@ -4,7 +4,6 @@ import Header from '@/components/onboarding/header';
 import BackBtn from '@/components/backBtn';
 import { useAppState } from '@/components/appStates/onboardingFormStates';
 import FormInput from '@/components/formInput';
-import CountryPicker from '@/components/countryPicker';
 import Colors from '@/constants/Colors';
 import { router } from 'expo-router';
 
@@ -16,7 +15,7 @@ export default function Data() {
     const handleSubmit = () => {
         // Check for form validation
 
-        router.push('/personalization')
+        router.navigate('/personalization')
     }
 
     return(
@@ -35,7 +34,7 @@ export default function Data() {
 
                             <View style={styles.labelView} >
                                 <Text style={ styles.labelViewText } >
-                                    First Name and Middle Name(if pressent)
+                                    First Name and Middle Name(if present)
                                 </Text>
                             </View>
                             <FormInput 
@@ -168,6 +167,7 @@ const styles = StyleSheet.create({
         paddingRight: 2,
         borderWidth: 0,
         alignSelf: 'flex-end',
+        fontFamily: 'Poppins-Medium',
         height: 54,
         
     },
