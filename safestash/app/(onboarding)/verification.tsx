@@ -49,7 +49,7 @@ export default function Verify() {
 
         setIsActive(true)
         setSubmitted(true)
-        router.push('/userData')
+        router.navigate('/userData')
     }
 
     return (

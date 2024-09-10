@@ -42,7 +42,7 @@ export default function Reg() {
                 axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`})
                     .then(response => {
                         console.log(response.status)
-                        router.push('/verification')
+                        router.navigate('/verification')
                     })
                     .catch((err) => {
                         console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
@@ -85,7 +85,7 @@ export default function Reg() {
                             secureText={false} 
                             onChangeText={setEmail}
                             value={email}
-                            type='default'
+                            type='email'
                             keyboardType='email-address'
                             style={ styles.normalInput }
                         />
