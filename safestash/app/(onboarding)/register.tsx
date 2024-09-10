@@ -6,8 +6,8 @@ import Colors from '@/constants/Colors';
 import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
 import FormInput from '@/components/formInput';
-import { useAppState } from '@/components/appStates/onboardingFormStates';
-import { formValidation } from '@/components/appStates/onboardingFormStates';
+import { formValidation, useAppState } from '@/components/appStates/onboardingFormStates';
+import errorStyles from '@/constants/errorStyles';
 
 export default function Reg() {
     const {
@@ -90,7 +90,7 @@ export default function Reg() {
                             style={ styles.normalInput }
                         />
                         {
-                            errors.email ? <View style={ styles.errorView } ><Text style={ styles.errorText } >{errors.email}</Text></View> : null
+                            errors.email ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.email}</Text></View> : null
                         }
 
                         <View style={styles.label} >
@@ -108,9 +108,9 @@ export default function Reg() {
                             containerStyle={ styles.inputContainer }
                         />
                         {
-                            errors.code || errors.mobileNumber ? <View style={ styles.errorView } >
-                                        {errors.code? <Text style={ styles.errorText } >{errors.code}</Text> : null}
-                                        {errors.mobileNumber ? <Text style={ styles.errorText } >{errors.mobileNumber}</Text> : null}
+                            errors.code || errors.mobileNumber ? <View style={ errorStyles.errorView } >
+                                        {errors.code? <Text style={ errorStyles.errorText } >{errors.code}</Text> : null}
+                                        {errors.mobileNumber ? <Text style={ errorStyles.errorText } >{errors.mobileNumber}</Text> : null}
                                     </View> : null
                         }
                     </View>
@@ -206,15 +206,5 @@ const styles = StyleSheet.create({
         borderBottomColor: Colors.light.red,
         position: 'relative',
     },
-    errorView: {
-        borderBottomWidth: .5,
-        borderBottomColor: Colors.light.red,
-        height: 'auto',
-        marginBottom: 1,
-    },
-    errorText: {
-        fontSize: 12,
-        padding: 1,
-        textAlign: 'center'
-    },
+    
 })
