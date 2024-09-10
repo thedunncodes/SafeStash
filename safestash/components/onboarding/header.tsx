@@ -1,9 +1,8 @@
 import React from 'react';
 import Colors from '@/constants/Colors';
-import { View, Text, StyleSheet, type ViewProps } from 'react-native';
+import { View, Text, StyleSheet, type ViewProps, type TextProps } from 'react-native';
 
-interface HeaderProps extends ViewProps {
-    // children: React.ReactNode;
+interface HeaderProps extends TextProps {
     context?: string
 }
 
@@ -20,15 +19,11 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.background,
         marginTop: 5,
         alignItems: 'flex-start',
-        // borderWidth: 1,
-        // borderColor: 'red',
         padding: 0,
     },
     text: {
         fontSize: 23,
         fontFamily: 'PoppinsBold',
         color: Colors.light.text,
-        // borderWidth: 1,
-        // borderColor: 'blue',
     }
 })
