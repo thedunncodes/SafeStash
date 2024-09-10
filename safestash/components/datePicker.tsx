@@ -11,18 +11,25 @@ interface DatePickerProps extends ViewProps{
 }
 
 const DatePicker = ({ defaultDate, style }: DatePickerProps) => {
-  // const [date, setDate] = useState<Date>(defaultDate || new Date());
   const [show, setShow] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { date, setDate, setDateField } = useAppState()
+
+  const formatDate = (date: Date): string => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    setDateField(currentDate.toDateString())
-    // onDateChange(currentDate);
+    setDateField(formatDate(currentDate))
   };
+
 
   const showDatePicker = () => {
     setShow(true);
@@ -31,7 +38,6 @@ const DatePicker = ({ defaultDate, style }: DatePickerProps) => {
 
   return (
     <View style={[styles.container, style]}>
-      <Text >Selected Date: {date.toDateString()}</Text>
       <TouchableOpacity style={styles.label} onPress={showDatePicker} >
         <Icon name='calendar' size={25} color={Colors.light.text} />
       </TouchableOpacity>
@@ -46,7 +52,7 @@ const DatePicker = ({ defaultDate, style }: DatePickerProps) => {
         <TouchableWithoutFeedback onPress={ () => {
             setModalVisible(false)
         } } >
-            <View style={{ flex: 1 }} ></View>
+            <View style={{ flex: 1, backgroundColor: 'rgba(27, 27, 27, .3)' }} ></View>
         </TouchableWithoutFeedback>
         <View style={ styles.modalContainer } >
             <View style={ styles.modalView } >
@@ -98,8 +104,10 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(200, 200, 200, .2)'
   },
   label: {
-    fontSize: 16,
-    marginBottom: 10,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
   },
   doneBtn: {
     fontSize: 20,
