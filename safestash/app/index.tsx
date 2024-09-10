@@ -35,7 +35,7 @@ export default function Index() {
                   <Text style={ styles.authBtnText } >Sign up</Text>
                 </TouchableOpacity>
             </Link>
-            <Link href={{ pathname: "/" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
+            <Link href={{ pathname: "/login" }} asChild style={{ backgroundColor: 'rgba(184, 0, 0, .1)' }}>
                 <TouchableOpacity style={ styles.authBtn } activeOpacity={0.7} >
                   <Text style={ [styles.authBtnText, { color: Colors.light.text,  }] } >Login</Text>
                 </TouchableOpacity>
