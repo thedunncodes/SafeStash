@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Colors from '@/constants/Colors';
+import { useAppState } from './appStates/onboardingFormStates';
 import { View, Text, TextInput, Keyboard, StyleSheet, type ViewProps, StyleProp, TouchableOpacity, KeyboardAvoidingView, Modal, Platform, ViewStyle, TextStyle, } from 'react-native';
+import Colors from '@/constants/Colors';
 import CountryCodePicker from './countryCodePicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from '@/components/datePicker';
-import { useAppState } from './appStates/onboardingFormStates';
+import CountryPicker from './countryPicker';
+import OccupationPicker from './onboarding/occupationPicker';
 
 interface InputProps extends ViewProps {
     placeholder?: string ,
@@ -13,7 +15,7 @@ interface InputProps extends ViewProps {
     textStyle?: StyleProp<TextStyle>,
     value: string,
     codeValue?: string,
-    type: 'default' | 'password' | 'email' | 'date' | 'code',
+    type: 'default' | 'password' | 'email' | 'date' | 'code' | 'country' | 'job',
     secureText?: boolean,
     keyboardType: 'email-address' | 'numeric' | 'default',
     maxLength?: number
@@ -31,7 +33,7 @@ export default function FormInput({
     const [passShow, setPassShow] = useState(secureText);
     const [modalVisible, setModalVisible] = useState(false);
     const [date, setDate] = useState<Date>()
-    const { errors, setErrors } = useAppState()
+    const { errors, setErrors, occupation, country } = useAppState()
 
     let codeValueTemp: string = '';
     if (type === 'code') {
@@ -79,7 +81,7 @@ export default function FormInput({
                     keyboardType={keyboardType}
                     maxLength={type === 'code'? 17 : maxLength || undefined}
                     onFocus={() => {
-                        if(type === 'date') {
+                        if(type === 'date' || type === 'country' || type === 'job') {
                             Keyboard.dismiss()
                         }
                     }}
@@ -91,6 +93,18 @@ export default function FormInput({
             </TouchableOpacity>
 
             <DatePicker style={{ display: type === 'date'? 'flex' : 'none' }} />
+
+            <CountryPicker
+                showModal={false}
+                defaultValue={country}
+                style={{ justifyContent: 'center', alignItems: 'center', width: 51, display: type === 'country'? 'flex' : 'none' }}
+            />
+
+            <OccupationPicker
+                showModal={false}
+                defaultValue={occupation}
+                style={{ justifyContent: 'center', alignItems: 'center', width: 51, display: type === 'job'? 'flex' : 'none' }}
+            />
         </View>
     )
 }
