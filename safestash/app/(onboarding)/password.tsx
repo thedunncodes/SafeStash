@@ -31,7 +31,8 @@ export default function Personalize() {
     const handleSubmit = () => {
         // Check for form validation
         if (ValidateForm()) {
-            router.navigate('/password')
+            router.navigate('/')
+            router.push('/login')
         }
     }
     
@@ -83,7 +84,6 @@ export default function Personalize() {
                             errors.confirmPass ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.confirmPass}</Text></View> : null
                         }
 
-                        <Text> Your password: {password} matches: {confirmPass} </Text>
                         <View style={ styles.submitContainer } >
                             <TouchableOpacity onPress={handleSubmit} style={styles.submitView} >
                                 <Text style={styles.submitViewText} >
