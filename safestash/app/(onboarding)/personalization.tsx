@@ -1,11 +1,13 @@
+import { router } from "expo-router";
 import { useMemo, useState, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Keyboard, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, TextInput, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BackBtn from "@/components/backBtn";
 import Header from "@/components/onboarding/header";
 import BodyView from "@/components/bodyView";
 import tags from "@/constants/tags";
 import Colors from "@/constants/Colors";
+import { useAppState } from "@/components/appStates/onboardingFormStates";
 
 interface TagItem {
     id: number;
@@ -29,24 +31,35 @@ export default function Personalize() {
         setTagList(updatedTagList);
     };
 
+    const handleSubmit = () => {
+        // Check for form validation
+
+        router.navigate('/password')
+    }
+
     return(
-        <ScrollView>
-            <BodyView style={ styles.body } >
-                <BackBtn pathname="/userData" style={ styles.backBtn } />
-                <View style={ styles.container } >
+        <BodyView  >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+                <KeyboardAvoidingView
+            
+                    style={ styles.body }
+                                
+                >
+                    <BackBtn pathname="/userData" style={ styles.backBtn } />
                     <Header style={styles.header} >Personalization</Header>
-                    <View>
-                        <Text>
-                            We have provided some tags to help you monitor and
-                            improve your spending habits, you can choose to add more now or later on.
-                            e.g Vets, Restaurants, PetFood, Spotify
-                        </Text>
-                    </View>
-                    <View>
+                    <View style={ styles.container } >
+                        <View style={ styles.infoSectionView } >
+                            <Text style={ styles.infoSectionText } >
+                                We have provided some tags to help you monitor and
+                                improve your spending habits, you can choose to add more now or later on.
+                                e.g Vets, Restaurants, PetFood, Spotify, Groceries
+                            </Text>
+                        </View>
+                        
                         <ScrollView
                             style={ styles.tagView }
                             nestedScrollEnabled={true}
-                            contentContainerStyle={{ flexDirection: 'row' ,flexWrap:'wrap', maxWidth: '100%'}}
+                            contentContainerStyle={{flexDirection: 'row' ,flexWrap:'wrap', maxWidth: '100%'}}
                         >
                         {
                             tagList.map((item, index) => {
@@ -76,26 +89,43 @@ export default function Personalize() {
                         <TouchableOpacity onPress={handleTag} style={styles.tagSubmitView} >
                             <Text style={styles.tagSubmitText} >Add Yours</Text>
                         </TouchableOpacity>
-
                     </View>
-                </View>
-            </BodyView>
-        </ScrollView>
+                    <View style={ styles.submitContainer } >
+                        <TouchableOpacity onPress={handleSubmit} style={styles.submitView} >
+                            <Text style={styles.submitViewText} >
+                                Save Tags
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+        </BodyView>
     )
 }
 
 const styles = StyleSheet.create({
     body: {
-        padding: 5
+        flex: 1,
+        padding: 5,
     },
     container: {
         padding: 5,
-    },
+            },
     header: {
         fontSize: 29,
+        padding: 5,
     },
     backBtn: {
         marginBottom: 15,
+    },
+    infoSectionView: {
+        marginTop: 5,
+        marginBottom: 20,
+    },
+    infoSectionText: {
+        fontFamily: 'PoppinsMedium',
+        fontSize: 13,
+        lineHeight: 20,
     },
     tagInput: {
         marginBottom: 5,
@@ -116,7 +146,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         borderRadius: 15,
         backgroundColor: 'rgba(77, 195, 255, 0.2)',
-        marginTop: 5,
+        marginTop: 15,
     
       },
       tagSubmitText: {
@@ -144,21 +174,43 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
       },
       tagView: { 
-        height: 110,
+        height: 130,
         marginTop: 10,
+        flexGrow: 0,
       },
       tagContainerText: {
         fontSize: 11,
         fontFamily: 'Poppins-Medium',
         flexShrink: 1,
+        textAlign:'center',
+        minWidth: '50%',
         flexWrap: 'wrap'
       },
       tagIconView: {
-        width: '20%',
+        maxWidth: '24.7%',
+        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     tagIcon: {
         color: Colors.light.red,
-      }
+    },
+    submitContainer: {
+        alignItems: 'center',
+        marginTop: 130,
+    },
+    submitView: {
+        width: '92%',
+        backgroundColor: Colors.light.darkRed,
+        borderRadius: 15,
+        height: 60,
+        justifyContent: 'center',
+    },
+    submitViewText: {
+        width: '100%',
+        textAlign: 'center',
+        color: Colors.dark.text,
+        fontSize: 22,
+        fontFamily: 'Poppins-Medium',
+    },
 })
