@@ -41,7 +41,7 @@ export default function Reg() {
             try {
                 axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`})
                     .then(response => {
-                        console.log(response.status)
+                        console.log(response.data)
                         router.navigate('/verification')
                     })
                     .catch((err) => {
@@ -56,9 +56,9 @@ export default function Reg() {
             }
             
             console.log('Submitted:\nEmail: ', email, ' Phone Number: ', countryCode, mobileNumber)
-            setEmail('')
-            setMobileNumber('')
-            setCountryCode('+_ _')
+            // setEmail('')
+            // setMobileNumber('')
+            // setCountryCode('+_ _')
         }
 
     } 
