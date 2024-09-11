@@ -10,16 +10,16 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 
 });
-
+// use int not serial for user_id
 async function createTables() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS account(
-      account_id SERIAL PRIMARY KEY,
-      user_id INT NOT NULL,
+    CREATE TABLE IF NOT EXISTS user_profile(
+      user_id SERIAL PRIMARY KEY,
       first_name VARCHAR(30),
       given_names VARCHAR(80),
-      phone_number VARCHAR(22),
-      email VARCHAR(30)
+      phone_number VARCHAR(22) UNIQUE,
+      email VARCHAR(30) UNIQUE,
+      password VARCHAR(20)
       );
     `);
 
