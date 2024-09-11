@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Keyboard, KeyboardAvoidingView } from "react-native";
 import { Link, router } from "expo-router";
+import axios from "axios";
 import BodyView from "@/components/bodyView";
 import Header from "@/components/onboarding/header";
 import FormInput from "@/components/formInput";
 import Colors from "@/constants/Colors";
 import NumToTime from "@/hooks/numToTime";
 import BackBtn from "@/components/backBtn";
+import {  formValidation, useAppState } from "@/components/appStates/onboardingFormStates";
+import errorStyles from "@/constants/errorStyles";
 
 export default function Verify() {
     const [countdown, setCountdown] = useState(90);
@@ -14,6 +17,12 @@ export default function Verify() {
     const [ submitted, setSubmitted ] = useState(false)
     // These are to be checked with the OTP stored in the asyncstorage 
     // after user session auth 
+    const {
+        errors, setErrors,
+        email, mobileNumber,
+        countryCode, setEmail,
+        setCountryCode, setMobileNumber
+    } = useAppState()
     const [ emailOtp, setEmailOtp ] = useState<string>('')
     const [ mobileOtp, setMobileOtp ] = useState<string>('')
 
@@ -42,25 +51,67 @@ export default function Verify() {
         };
     }, [isActive, countdown])
 
+    // const ValidateForm = () => {
+    //     let errors: formValidation = {}
+
+    //     setErrors(errors)
+
+    //     return Object.keys(errors).length === 0
+    // }
+
+
     const handleSubmit = () => {
         // Confirm states with the stored in OTP,
 
-        // once the codes OTPs are verified and matched clean the states here
+        // if (ValidateForm()) {
+        try {
+            axios.post('https://flying-still-sunbird.ngrok-free.app/submit', {
+                email, mobileNumber: `${countryCode}${mobileNumber}`,
+                rMobileOtp: mobileOtp, rEmailOtp: emailOtp
+            })
+                .then(response => {
+                    if (response.status = 200) {
+                        router.navigate('/')
+                        router.push('/userData')
+                        setEmail('')
+                        setMobileNumber('')
+                        setCountryCode('+_ _')
+                    }
+                })
+                .catch((err) => {
+                    console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
+                    if (err.response.status === 401) {
+                        console.log(err.response.data)
+                        if (err.response.data.emailError === 'Invalid EmailOTP') {
+                            errors.emailOtp = 'OTP invalid'
+                            setErrors(errors)
+                            setEmailOtp('')
+                        }
+                        if (err.response.data.phoneError === 'Invalid MobileOTP') {
+                            errors.mobileOtp = 'OTP invalid'
+                            setErrors(errors)
+                            setMobileOtp('')
+                        }
+                    }
+                })
+        } catch(err) {
+            console.error('Verification failed', err)
+        }
+        // }
 
         setIsActive(true)
         setSubmitted(true)
-        router.navigate('/userData')
+        // router.navigate('/userData')
     }
 
     return (
         <BodyView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
-                    behavior='padding'
-                    keyboardVerticalOffset={-30}
+
                     style={ styles.body }
                 >
-                    <BackBtn pathname="/register" />
+                    <BackBtn style={styles.backBtn} pathname="/register" />
                     <Header style={ styles.header } >Verify your E-mail address and Phone number</Header>
                     <View style={styles.verificationContainer}  >
                         <View style={ styles.infoTextVIew } >
@@ -84,6 +135,11 @@ export default function Verify() {
                             style={ styles.inputStyle }
                             containerStyle={ styles.inputContainer }
                         />
+                        {
+                            errors.emailOtp ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.emailOtp}</Text></View> : null
+                        }
+
+
                         <View style={styles.labelView} >
                             <Text style={ styles.labelViewText } >
                                 Enter your phone number OTP.
@@ -100,6 +156,9 @@ export default function Verify() {
                             style={ styles.inputStyle }
                             containerStyle={ styles.inputContainer }
                         />
+                        {
+                            errors.mobileOtp ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.mobileOtp}</Text></View> : null
+                        }
                         <View>
                             <TouchableOpacity
                                 disabled={isActive && submitted? true : false}
@@ -130,6 +189,9 @@ const styles = StyleSheet.create({
     body: {
         flex: 1,
     },
+    backBtn: {
+        marginBottom: 15,
+    },
     header: {
         textAlign: 'center',
         // backgroundColor: 'red',
@@ -138,7 +200,6 @@ const styles = StyleSheet.create({
         fontSize: 21,
     },
     infoTextVIew: {
-        marginBottom: 10,
         marginTop: 5
     },
     infoText: {
@@ -160,12 +221,12 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(25,25,25,0.6)'
     },
     inputContainer: {
-        marginBottom: 15,
+        // marginTop: 15,
         height: 70,
     },
     submitViewContainer: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center'
     },
     submitView: {
@@ -174,6 +235,7 @@ const styles = StyleSheet.create({
         width: '90%',
         justifyContent: 'center',
         borderRadius: 15,
+        marginTop: 55,
     },
     submitViewText: {
         width: '100%',
@@ -184,6 +246,7 @@ const styles = StyleSheet.create({
     },
     labelView: {
         marginBottom: 1,
+        marginTop: 15,
     },
     labelViewText: {
         fontFamily: 'Poppins-Regular',
