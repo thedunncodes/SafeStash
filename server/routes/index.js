@@ -9,4 +9,6 @@ router.get('/', AppController.home);
 
 router.post('/verify', body('mobileNumber').isMobilePhone('any', { strictMode: true }), FormController.verify);
 
+router.post('/submit', FormController.submit);
+
 module.exports = router;
