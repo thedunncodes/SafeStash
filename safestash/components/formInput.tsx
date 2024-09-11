@@ -81,6 +81,9 @@ export default function FormInput({
                             errors.confirmPass? errors.confirmPass = undefined : undefined;
                             errors.minPassword? errors.minPassword = undefined : undefined;
                         }
+
+                        errors.emailOtp? errors.emailOtp = undefined : undefined;
+                        errors.mobileOtp? errors.mobileOtp = undefined : undefined;
                         
                     }}
                     style={[{ color: Colors.light.text, flex: 1, }, textStyle]}
