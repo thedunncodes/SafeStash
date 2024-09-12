@@ -15,11 +15,15 @@ async function createTables() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS user_profile(
       user_id SERIAL PRIMARY KEY,
-      first_name VARCHAR(30),
-      given_names VARCHAR(80),
+      last_name VARCHAR(30),
+      given_name VARCHAR(80),
+      date_of_birth VARCHAR(15),
+      country VARCHAR(80),
+      occupation VARCHAR(200),
+      tags TEXT[],
       phone_number VARCHAR(22) UNIQUE,
       email VARCHAR(30) UNIQUE,
-      password VARCHAR(20)
+      password VARCHAR(40)
       );
     `);
 
