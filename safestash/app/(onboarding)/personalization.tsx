@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import axios from "axios";
 import { useMemo, useState, useCallback } from "react";
 import { View, Text, StyleSheet, Keyboard, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, TextInput, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +20,8 @@ export default function Personalize() {
     const [tagList, setTagList] = useState<string[]>(tags)
     const [ originalTagLength, setOriginalTagLength ] = useState<number>(tags.length)
 
+    const { email } = useAppState()
+
     const handleTag = () => {
         if (tagHolder !== '') {
             setTagList((prevTags) => [...prevTags, tagHolder]);
@@ -32,10 +35,22 @@ export default function Personalize() {
     };
 
     const handleSubmit = () => {
-        // Check for form validation
-        // return the splice to the backend
-        console.log(tagList.slice(originalTagLength))
-        router.navigate('/password')
+        try {
+            axios.post('https://flying-still-sunbird.ngrok-free.app/tags', {
+                email, tags: tagList
+            })
+                .then(response => {
+                    if (response.status === 201) {
+                        console.log(response.data)
+                        router.navigate('/password')
+                    }
+                })
+                .catch((err) => {
+                    console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
+                })
+        } catch(err) {
+            console.error('Verification failed', err)
+        }
     }
 
     return(
