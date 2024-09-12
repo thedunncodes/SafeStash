@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import axios from "axios";
 import { useMemo, useState, useCallback } from "react";
 import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import BackBtn from "@/components/backBtn";
@@ -14,7 +15,11 @@ export default function Personalize() {
     const [confirmPass, setConfirmPass] = useState<string>('')
     const [ password, setPassword ] = useState<string>('')
 
-    const { errors, setErrors } = useAppState()
+    const {
+        errors, setErrors,
+        email, setGivenName,
+        setLastName, setCountry,
+        setDateField, setOccupation } = useAppState()
 
     const ValidateForm = () => {
         let errors: formValidation = {}
@@ -31,8 +36,29 @@ export default function Personalize() {
     const handleSubmit = () => {
         // Check for form validation
         if (ValidateForm()) {
-            router.navigate('/')
-            router.push('/login')
+            try {
+                axios.post('https://flying-still-sunbird.ngrok-free.app/register', {
+                    email, password
+                })
+                    .then(response => {
+                        if (response.status === 201) {
+                            console.log(response.data);
+                            router.navigate('/');
+                            router.push('/login');
+                            setCountry('')
+                            setDateField('')
+                            setGivenName('')
+                            setLastName('')
+                            setOccupation('')
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
+                    })
+            } catch(err) {
+                console.error('Verification failed', err)
+            }
+
         }
     }
     
