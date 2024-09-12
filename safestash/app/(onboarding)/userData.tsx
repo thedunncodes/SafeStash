@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import {View, Text, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity} from 'react-native';
+import axios from 'axios';
 import BodyView from '@/components/bodyView';
 import Header from '@/components/onboarding/header';
 import BackBtn from '@/components/backBtn';
@@ -14,7 +15,7 @@ export default function Data() {
         setLastName, setGivenName,
         dateField, country,
         occupation, errors,
-        setErrors
+        setErrors, email
     } = useAppState()
 
     const ValidateForm = () => {
@@ -38,7 +39,22 @@ export default function Data() {
     const handleSubmit = () => {
         // Check for form validation
         if (ValidateForm()) {
-            router.navigate('/personalization')
+            try {
+                axios.post('https://flying-still-sunbird.ngrok-free.app/userProfile', {
+                    email, givenName, lastName, dob: dateField, country, occupation
+                })
+                    .then(response => {
+                        if (response.status === 201) {
+                            router.navigate('/personalization')
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
+                    })
+            } catch(err) {
+                console.error('Verification failed', err)
+            }
+            // router.navigate('/personalization')
         }
     }
 
