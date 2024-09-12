@@ -11,4 +11,6 @@ router.post('/verify', body('mobileNumber').isMobilePhone('any', { strictMode: t
 
 router.post('/submit', FormController.submit);
 
+router.post('/userProfile', FormController.userData);
+
 module.exports = router;
