@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { validationResult } from 'express-validator';
 import dotenv from 'dotenv';
+import sha1 from 'sha1';
 import redisClient from '../utils/redis';
 import pool from '../utils/db';
 
@@ -14,10 +15,14 @@ export default class FormController {
       return res.status(401).json({ message: 'Invalid Phone number' });
     }
 
-    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+    const emailResult = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+    const phoneResult = await pool.query('SELECT phone_number FROM user_profile WHERE phone_number = $1;', [mobileNumber]);
 
-    if (result.rows[0]) {
-      return res.status(401).json({ error: 'User Already Registered' });
+    if (emailResult.rows[0]) {
+      return res.status(401).json({ emailError: 'Email Already Registered' });
+    }
+    if (phoneResult.rows[0]) {
+      return res.status(401).json({ phoneError: 'Phone number Already Registered' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -138,6 +143,50 @@ export default class FormController {
 
       console.log(result);
       return res.status(201).json({ status: 'Data Created' });
+    }
+
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async tags(req, res) {
+    const {
+      email, tags,
+    } = req.body;
+    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+
+    console.log(tags);
+
+    if (result.rows[0].email) {
+      const result = await pool.query(`
+          UPDATE user_profile
+          SET tags = ARRAY(SELECT DISTINCT UNNEST(array_cat(tags, $1)))
+          WHERE email = $2
+        `, [tags, email]);
+
+      console.log(result);
+      return res.status(201).json({ status: 'Data Created' });
+    }
+
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async register(req, res) {
+    const {
+      email, password,
+    } = req.body;
+    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+
+    console.log(password);
+
+    if (result.rows[0].email) {
+      const result = await pool.query(`
+          UPDATE user_profile
+          SET password = $1
+          WHERE email = $2
+        `, [sha1(password), email]);
+
+      console.log(result);
+      return res.status(201).json({ status: 'Password Saved' });
     }
 
     return res.status(401).json({ error: 'Unauthorized' });
