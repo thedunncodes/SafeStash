@@ -14,6 +14,12 @@ export default class FormController {
       return res.status(401).json({ message: 'Invalid Phone number' });
     }
 
+    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+
+    if (result.rows[0]) {
+      return res.status(401).json({ error: 'User Already Registered' });
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -110,6 +116,28 @@ export default class FormController {
       await redisClient.del(`${email}_EmailOTP`);
       await redisClient.del(`${email}_PhoneOTP`);
       return res.status(200).json({ status: 'Verified' });
+    }
+
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async userData(req, res) {
+    const {
+      email, givenName, lastName, dob, country, occupation,
+    } = req.body;
+    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+
+    console.log(result.rows);
+
+    if (result.rows[0].email) {
+      const result = await pool.query(`
+          UPDATE user_profile
+          SET given_name = $1, last_name = $2, date_of_birth = $3, country = $4, occupation = $5
+          WHERE email = $6
+        `, [givenName, lastName, dob, country, occupation, email]);
+
+      console.log(result);
+      return res.status(201).json({ status: 'Data Created' });
     }
 
     return res.status(401).json({ error: 'Unauthorized' });
