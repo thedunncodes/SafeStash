@@ -46,8 +46,16 @@ export default function Reg() {
                     })
                     .catch((err) => {
                         console.error('Verification failed with staus code ->', err.response.status, '<- Message: ', err.response.data)
-                        if (err.response.data.message === 'Invalid Phone number') {
+                        if (err.response.data.message) {
                             errors.mobileNumber = 'Input a valid phone number'
+                            setErrors(errors)
+                        }
+                        if (err.response.data.emailError) {
+                            errors.invalidEmail = err.response.data.emailError
+                            setErrors(errors)
+                        }
+                        if (err.response.data.phoneError) {
+                            errors.invalidMobile = err.response.data.phoneError
                             setErrors(errors)
                         }
                     })
@@ -90,7 +98,11 @@ export default function Reg() {
                             style={ styles.normalInput }
                         />
                         {
-                            errors.email ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.email}</Text></View> : null
+                            errors.email || errors.invalidEmail?
+                                <View style={ errorStyles.errorView } >
+                                    {errors.email? <Text style={ errorStyles.errorText } >{errors.email}</Text> : null}
+                                    {errors.invalidEmail ? <Text style={ errorStyles.errorText } >{errors.invalidEmail}</Text> : null}
+                                </View> : null
                         }
 
                         <View style={styles.label} >
@@ -108,9 +120,10 @@ export default function Reg() {
                             containerStyle={ styles.inputContainer }
                         />
                         {
-                            errors.code || errors.mobileNumber ? <View style={ errorStyles.errorView } >
+                            errors.code || errors.mobileNumber || errors.invalidMobile ? <View style={ errorStyles.errorView } >
                                         {errors.code? <Text style={ errorStyles.errorText } >{errors.code}</Text> : null}
                                         {errors.mobileNumber ? <Text style={ errorStyles.errorText } >{errors.mobileNumber}</Text> : null}
+                                        {errors.invalidMobile ? <Text style={ errorStyles.errorText } >{errors.invalidMobile}</Text> : null}
                                     </View> : null
                         }
                     </View>
