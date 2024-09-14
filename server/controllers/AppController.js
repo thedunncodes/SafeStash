@@ -1,8 +1,5 @@
-import pool from '../utils/db';
-
 export default class AppController {
   static async home(req, res) {
-    const data = await pool.query('SELECT NOW() as now');
-    return res.json(data);
+    return res.status(200).send('Safe Stash Server running.........');
   }
 }
