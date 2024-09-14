@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity, BackHandler, Platform } from "react-native";
+import axios from "axios";
+import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import BackBtn from "@/components/backBtn";
 import Header from "@/components/onboarding/header";
 import BodyView from "@/components/bodyView";
@@ -8,12 +9,14 @@ import Colors from "@/constants/Colors";
 import FormInput from "@/components/formInput";
 import { formValidation, useAppState } from "@/components/appStates/onboardingFormStates";
 import errorStyles from "@/constants/errorStyles";
+import { useAuth } from "@/components/appStates/authSession";
 
 
 export default function Personalize() {
     const [ password, setPassword ] = useState<string>('')
 
     const { errors, setErrors, email, setEmail } = useAppState()
+    const { login, userInfo } = useAuth()
 
     const ValidateForm = () => {
         let errors: formValidation = {}
@@ -29,9 +32,30 @@ export default function Personalize() {
     }
     
     const handleSubmit = () => {
-        // Check for form validation
         if (ValidateForm()) {
-            router.navigate('/login')
+            try {
+                axios.post('https://flying-still-sunbird.ngrok-free.app/login', {
+                    email, password
+                })
+                    .then(response => {
+                        login(response.data.token, response.data.userData)
+                        router.navigate('/dashboard')
+                        setEmail('')
+                        setPassword('')
+                    })
+                    .catch((err) => {
+                        if (err.response.data.error) {
+                            errors.invalidEmail = err.response.data.error
+                            setErrors(errors)
+                        }
+                        if (err.response.data.passwordError) {
+                            errors.invalidPassword = err.response.data.passwordError
+                            setErrors(errors)
+                        }
+                    })
+            } catch(err) {
+                console.error('Verification failed', err)
+            }
         }
     }
     
@@ -44,7 +68,7 @@ export default function Personalize() {
                         <Header style={styles.header} >Log Into Your Account </Header>
                         <View style={styles.infoSectionView} >
                             <Text style={ styles.infoSectionText } >
-                                Provide your email address and password to gain access to your account
+                                {userInfo.last_name} Provide your email address and password to gain access to your account
                             </Text>
                         </View>
                         <View style={styles.label} >
@@ -60,8 +84,9 @@ export default function Personalize() {
                             style={ styles.normalInput }
                         />
                         {
-                            errors.email ? <View style={ errorStyles.errorView } >
+                            errors.email || errors.invalidEmail ? <View style={ errorStyles.errorView } >
                                         {errors.email ? <Text style={ errorStyles.errorText } >{errors.email}</Text> : null}
+                                        {errors.invalidEmail ? <Text style={ errorStyles.errorText } >{errors.invalidEmail}</Text> : null}
                                     </View> : null
                         }
 
@@ -79,7 +104,11 @@ export default function Personalize() {
                             containerStyle={styles.mainInputContainer}
                         />
                         {
-                            errors.minPassword ? <View style={ errorStyles.errorView } ><Text style={ errorStyles.errorText } >{errors.minPassword}</Text></View> : null
+                            errors.minPassword || errors.invalidPassword ?
+                                <View style={ errorStyles.errorView } >
+                                    {errors.minPassword ? <Text style={ errorStyles.errorText } >{errors.minPassword}</Text> : null}
+                                    {errors.invalidPassword ? <Text style={ errorStyles.errorText } >{errors.invalidPassword}</Text> : null}
+                                </View> : null
                         }
                         <TouchableOpacity
                                 style={ styles.resendView }
