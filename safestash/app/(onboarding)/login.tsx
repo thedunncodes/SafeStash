@@ -68,7 +68,7 @@ export default function Personalize() {
                         <Header style={styles.header} >Log Into Your Account </Header>
                         <View style={styles.infoSectionView} >
                             <Text style={ styles.infoSectionText } >
-                                {userInfo.last_name} Provide your email address and password to gain access to your account
+                                Provide your email address and password to gain access to your account
                             </Text>
                         </View>
                         <View style={styles.label} >
