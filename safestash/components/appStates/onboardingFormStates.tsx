@@ -14,6 +14,9 @@ export interface formValidation {
   occupation?: string;
   emailOtp?: string;
   mobileOtp?: string;
+  invalidEmail?: string;
+  invalidMobile?: string;
+  invalidPassword?: string;
 }
 
 type AppStateContextType = {
