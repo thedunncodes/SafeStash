@@ -17,4 +17,6 @@ router.post('/tags', FormController.tags);
 
 router.post('/register', FormController.register);
 
+router.post('/login', FormController.login);
+
 module.exports = router;
