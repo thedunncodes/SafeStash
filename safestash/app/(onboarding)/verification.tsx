@@ -73,7 +73,7 @@ export default function Verify() {
                     if (response.status = 200) {
                         router.navigate('/')
                         router.push('/userData')
-                        setEmail('')
+                        // setEmail('')
                         setMobileNumber('')
                         setCountryCode('+_ _')
                     }
