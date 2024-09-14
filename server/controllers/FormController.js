@@ -2,13 +2,14 @@ import axios from 'axios';
 import { validationResult } from 'express-validator';
 import dotenv from 'dotenv';
 import sha1 from 'sha1';
+import jwt from 'jsonwebtoken';
 import redisClient from '../utils/redis';
 import pool from '../utils/db';
 
 dotenv.config();
 export default class FormController {
   static async verify(req, res) {
-    const { email, mobileNumber } = req.body;
+    const { email, mobileNumber, code } = req.body;
     const errors = validationResult(req).array();
     if (errors.length > 0) {
       console.log('Errors: ', errors);
@@ -33,6 +34,7 @@ export default class FormController {
 
     await redisClient.set('Email', email, 5 * 60);
     await redisClient.set('PhoneNumber', mobileNumber, 5 * 60);
+    await redisClient.set('code', code, 5 * 60);
 
     const mobileNumberData = {
       meta_data: { first_name: 'SafeStash' },
@@ -98,6 +100,7 @@ export default class FormController {
 
     const userEmail = await redisClient.get('Email');
     const userPhone = await redisClient.get('PhoneNumber');
+    const userCode = await redisClient.get('code');
 
     if (emailkey !== rEmailOtp || phoneKey !== rMobileOtp) {
       console.log(`Email OTP: ${emailkey}\nPhone OTP: ${phoneKey}`);
@@ -111,11 +114,12 @@ export default class FormController {
 
     if ((userEmail === email) && (userPhone === mobileNumber)) {
       const response = await pool.query(`
-          INSERT INTO user_profile (email, phone_number) VALUES (
+          INSERT INTO user_profile (email, phone_number, country_code) VALUES (
             $1,
-            $2
+            $2,
+            $3
           );
-        `, [userEmail, userPhone]);
+        `, [userEmail, userPhone, userCode]);
 
       console.log(response);
       await redisClient.del(`${email}_EmailOTP`);
@@ -190,5 +194,39 @@ export default class FormController {
     }
 
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async login(req, res) {
+    const {
+      email, password,
+    } = req.body;
+    const result = await pool.query(`
+      SELECT email, password, last_name, given_name, country_code, tags, phone_number 
+      FROM user_profile
+      WHERE email = $1;
+      `, [email]);
+
+    const userData = {};
+
+    console.log(result.rows);
+
+    if (result.rows[0]) {
+      Object.entries(result.rows[0]).forEach(([key, value]) => {
+        if (key !== 'password') {
+          userData[key] = value;
+        }
+      });
+
+      const token = jwt.sign(userData, process.env.JWT_SECRET_KEY, { expiresIn: '30 days' });
+
+      if (result.rows[0].email === email) {
+        if (result.rows[0].password === sha1(password)) {
+          return res.status(201).json({ status: 'Login Succesful', token, userData });
+        }
+        return res.status(401).json({ passwordError: 'Invalid Password' });
+      }
+    }
+
+    return res.status(401).json({ error: 'Email not registered' });
   }
 }

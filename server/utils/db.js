@@ -19,6 +19,7 @@ async function createTables() {
       given_name VARCHAR(80),
       date_of_birth VARCHAR(15),
       country VARCHAR(80),
+      country_code VARCHAR(10),
       occupation VARCHAR(200),
       tags TEXT[],
       phone_number VARCHAR(22) UNIQUE,

@@ -39,7 +39,7 @@ export default function Reg() {
     const handleSubmit = () => {
         if (ValidateForm()) {
             try {
-                axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`})
+                axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`, code: countryCode,})
                     .then(response => {
                         console.log(response.data)
                         router.navigate('/verification')
