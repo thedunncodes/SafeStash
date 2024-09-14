@@ -21,6 +21,9 @@
     },
     "homepage": "https://github.com/thedunncodes/SafeStash#readme",
     "dependencies": {
+        "@tbdex/http-client": "^1.1.0",
+        "@web5/credentials": "^1.0.3",
+        "@web5/dids": "^1.1.2",
         "axios": "^1.7.7",
         "chai-http": "^4.3.0",
         "cors": "^2.8.5",
@@ -34,11 +37,11 @@
         "uuid": "^8.2.0"
     },
     "devDependencies": {
-        "@babel/cli": "^7.8.0",
-        "@babel/core": "^7.8.0",
+        "@babel/cli": "^7.25.6",
+        "@babel/core": "^7.25.2",
         "@babel/node": "^7.8.0",
-        "@babel/preset-env": "^7.8.2",
-        "@babel/register": "^7.8.0",
+        "@babel/preset-env": "^7.25.4",
+        "@babel/register": "^7.24.6",
         "chai": "^4.2.0",
         "chai-http": "^4.3.0",
         "eslint": "^6.4.0",
