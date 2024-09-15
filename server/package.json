@@ -27,6 +27,7 @@
         "axios": "^1.7.7",
         "chai-http": "^4.3.0",
         "cors": "^2.8.5",
+        "country-data": "^0.0.31",
         "dotenv": "^16.4.5",
         "express": "^4.17.1",
         "express-validator": "^7.2.0",
