@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
 import { VerifiableCredential, PresentationExchange } from '@web5/credentials';
+import { json } from 'express';
+import { DidDht } from '@web5/dids';
 import pfiList from '../utils/pfiList';
 import mockOfferings from '../utils/mockOfferings';
+import pool from '../utils/db';
 
 dotenv.config();
 async function getTbdexHttpClient() {
@@ -84,5 +87,27 @@ export default class TbdDexController {
     }
 
     return res.status(200).json(offerings);
+  }
+
+  static async credentials(req, res) {
+    const { userId, signedVcJwt } = req.body;
+    const result = await pool.query(`
+        UPDATE accounts
+        SET user_VC = CASE
+          WHEN $1 = ANY(user_VC) THEN user_VC
+          ELSE array_append(user_VC, $1)
+        END
+        WHERE user_id = $2;
+      `, [signedVcJwt, userId]);
+
+    if (result) {
+      return res.status(201).json({ status: 'VC added' });
+    }
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  static async sendRfq(req, res) {
+    const resolvedDhtDid = await DidDht.resolve('did:dht:xgxzcs8gp1ywp1iqc1rebfegn53meg6im8imhjkj8gutjc136nwo');
+    return res.json({ resolvedDhtDid });
   }
 }
