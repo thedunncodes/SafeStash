@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { validationResult } from 'express-validator';
+import { countries } from 'country-data';
+import { DidDht } from '@web5/dids';
 import dotenv from 'dotenv';
 import sha1 from 'sha1';
 import jwt from 'jsonwebtoken';
@@ -112,18 +114,36 @@ export default class FormController {
       });
     }
 
+    const country = countries.all.filter((country) => country.countryCallingCodes[0] === userCode);
+    const didDht = await DidDht.create({ options: { publish: true } });
+    console.log(didDht.uri);
+
     if ((userEmail === email) && (userPhone === mobileNumber)) {
       const response = await pool.query(`
           INSERT INTO user_profile (email, phone_number, country_code) VALUES (
             $1,
             $2,
             $3
-          );
+          )
+          RETURNING user_id;
         `, [userEmail, userPhone, userCode]);
 
+      if (response && didDht) {
+        const accRes = await pool.query(`
+            INSERT INTO accounts (user_id, currency, user_did)
+            VALUES ($1, $2, $3)
+            RETURNING account_id;
+          `, [response.rows[0].user_id, country[0].currencies[0], didDht.uri]);
+        console.log(accRes);
+      }
+
       console.log(response);
+      console.log('User ID: ', response.rows[0].user_id);
       await redisClient.del(`${email}_EmailOTP`);
       await redisClient.del(`${email}_PhoneOTP`);
+      await redisClient.del('Email');
+      await redisClient.del('PhoneNumber');
+      await redisClient.del('code');
       return res.status(200).json({ status: 'Verified' });
     }
 
@@ -132,20 +152,39 @@ export default class FormController {
 
   static async userData(req, res) {
     const {
-      email, givenName, lastName, dob, country, occupation,
+      email, givenName, lastName, dob, country, occupation, code,
     } = req.body;
-    const result = await pool.query('SELECT email FROM user_profile WHERE email = $1;', [email]);
+    const userInfo = await pool.query('SELECT user_id, email FROM user_profile WHERE email = $1;', [email]);
+    if (!userInfo) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const userAcc = await pool.query('SELECT user_did FROM accounts WHERE user_id = $1;', [userInfo.rows[0].user_id]);
+    console.log(userInfo.rows);
 
-    console.log(result.rows);
-
-    if (result.rows[0].email) {
-      const result = await pool.query(`
+    if (userInfo.rows[0].email) {
+      await pool.query(`
           UPDATE user_profile
           SET given_name = $1, last_name = $2, date_of_birth = $3, country = $4, occupation = $5
           WHERE email = $6
         `, [givenName, lastName, dob, country, occupation, email]);
 
-      console.log(result);
+      console.log(userAcc.rows[0]);
+
+      try {
+        const kccResponse = await axios.get(`https://mock-idv.tbddev.org/kcc?name=${givenName}%20${lastName}&country=%2B${code.slice(1)}&did=${userAcc.rows[0].user_did}`);
+        console.log(kccResponse.data);
+        await pool.query(`
+          UPDATE accounts
+          SET user_VC = CASE
+            WHEN $1 = ANY(user_VC) THEN user_VC
+            ELSE array_append(user_VC, $1)
+          END
+          WHERE user_id = $2;
+        `, [kccResponse.data, userInfo.rows[0].user_id]);
+      } catch (err) {
+        console.error('Failed  to generate Kcc', err);
+      }
+
       return res.status(201).json({ status: 'Data Created' });
     }
 
@@ -201,7 +240,7 @@ export default class FormController {
       email, password,
     } = req.body;
     const result = await pool.query(`
-      SELECT email, password, last_name, given_name, country_code, tags, phone_number 
+      SELECT user_id, email, password, last_name, given_name, country_code, tags, phone_number 
       FROM user_profile
       WHERE email = $1;
       `, [email]);
