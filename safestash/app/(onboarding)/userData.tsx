@@ -15,7 +15,8 @@ export default function Data() {
         setLastName, setGivenName,
         dateField, country,
         occupation, errors,
-        setErrors, email
+        setErrors, email,
+        countryCode, setCountryCode
     } = useAppState()
 
     const ValidateForm = () => {
@@ -41,11 +42,12 @@ export default function Data() {
         if (ValidateForm()) {
             try {
                 axios.post('https://flying-still-sunbird.ngrok-free.app/userProfile', {
-                    email, givenName, lastName, dob: dateField, country, occupation
+                    email, givenName, lastName, dob: dateField, country, occupation, code: countryCode
                 })
                     .then(response => {
                         if (response.status === 201) {
                             router.navigate('/personalization')
+                            setCountryCode('+_ _')
                         }
                     })
                     .catch((err) => {
