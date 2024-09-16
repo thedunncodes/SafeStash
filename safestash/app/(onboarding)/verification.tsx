@@ -11,6 +11,7 @@ import BackBtn from "@/components/backBtn";
 import {  formValidation, useAppState } from "@/components/appStates/onboardingFormStates";
 import errorStyles from "@/constants/errorStyles";
 
+
 export default function Verify() {
     const [countdown, setCountdown] = useState(90);
     const [isActive, setIsActive] = useState(false);
@@ -27,9 +28,7 @@ export default function Verify() {
     const [ mobileOtp, setMobileOtp ] = useState<string>('')
 
     const handleResend = () => {
-        // Re-issue code with the states again i haven't wiped them
-        // use appstate to bring them back here
-
+ 
         if (submitted) {
             setIsActive(true)
             setCountdown(90)
@@ -51,13 +50,6 @@ export default function Verify() {
         };
     }, [isActive, countdown])
 
-    // const ValidateForm = () => {
-    //     let errors: formValidation = {}
-
-    //     setErrors(errors)
-
-    //     return Object.keys(errors).length === 0
-    // }
 
 
     const handleSubmit = () => {
@@ -65,7 +57,7 @@ export default function Verify() {
 
         // if (ValidateForm()) {
         try {
-            axios.post('https://flying-still-sunbird.ngrok-free.app/submit', {
+            axios.post(`${process.env.NGROK_TUNNEL}/submit`, {
                 email, mobileNumber: `${countryCode}${mobileNumber}`,
                 rMobileOtp: mobileOtp, rEmailOtp: emailOtp
             })
@@ -75,7 +67,6 @@ export default function Verify() {
                         router.push('/userData')
                         // setEmail('')
                         setMobileNumber('')
-                        setCountryCode('+_ _')
                     }
                 })
                 .catch((err) => {

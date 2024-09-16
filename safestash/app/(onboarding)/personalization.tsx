@@ -10,6 +10,7 @@ import tags from "@/constants/tags";
 import Colors from "@/constants/Colors";
 import { useAppState } from "@/components/appStates/onboardingFormStates";
 
+
 interface TagItem {
     id: number;
     tag: string;
@@ -36,7 +37,7 @@ export default function Personalize() {
 
     const handleSubmit = () => {
         try {
-            axios.post('https://flying-still-sunbird.ngrok-free.app/tags', {
+            axios.post(`${process.env.NGROK_TUNNEL}/tags`, {
                 email, tags: tagList
             })
                 .then(response => {

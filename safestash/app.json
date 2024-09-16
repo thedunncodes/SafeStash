@@ -4,11 +4,11 @@
     "slug": "safestash",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/safestash-icon.png",
+    "icon": "./assets/images/new-icon.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/did-image1.jpg",
+      "image": "./assets/images/splash-image.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

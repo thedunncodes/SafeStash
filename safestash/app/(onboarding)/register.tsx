@@ -9,6 +9,7 @@ import FormInput from '@/components/formInput';
 import { formValidation, useAppState } from '@/components/appStates/onboardingFormStates';
 import errorStyles from '@/constants/errorStyles';
 
+
 export default function Reg() {
     const {
         email,
@@ -39,7 +40,7 @@ export default function Reg() {
     const handleSubmit = () => {
         if (ValidateForm()) {
             try {
-                axios.post('https://flying-still-sunbird.ngrok-free.app/verify', {email, mobileNumber: `${countryCode}${mobileNumber}`, code: countryCode,})
+                axios.post(`${process.env.NGROK_TUNNEL}/verify`, {email, mobileNumber: `${countryCode}${mobileNumber}`, code: countryCode,})
                     .then(response => {
                         console.log(response.data)
                         router.navigate('/verification')

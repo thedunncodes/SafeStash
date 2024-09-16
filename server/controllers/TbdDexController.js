@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { VerifiableCredential, PresentationExchange } from '@web5/credentials';
-import { json } from 'express';
 import { DidDht } from '@web5/dids';
 import pfiList from '../utils/pfiList';
 import mockOfferings from '../utils/mockOfferings';
@@ -10,7 +9,8 @@ dotenv.config();
 async function getTbdexHttpClient() {
   // eslint-disable-next-line no-eval
   const module = await eval('import("@tbdex/http-client")');
-  return module.TbdexHttpClient;
+  const modules = { TbdexHttpClient: module.TbdexHttpClient, Rfq: module.Rfq };
+  return modules;
 }
 
 export default class TbdDexController {
@@ -20,7 +20,7 @@ export default class TbdDexController {
       return res.status(401).json({ error: 'Currency Required' });
     }
 
-    const TbdexHttpClient = await getTbdexHttpClient();
+    const { TbdexHttpClient } = await getTbdexHttpClient();
     let offerings = {};
 
     // Incase you are getting a 'Failed to get offerings from did:dht:...'
@@ -37,13 +37,9 @@ export default class TbdDexController {
         }),
       );
     } catch (err) {
+      console.error(err);
       offerings = mockOfferings;
     }
-
-    // Incase you are getting a 'Failed to get offerings from did:dht:...'
-    // or 'InvalidDidError: Failed to resolve DID: did:dht:...', i have
-    // provided a mock offering containing all the offerings offered by the mock PFI's,
-    // the error is a mobile newtork issue, for me though. Uncomment the line below
 
     if (offerings) {
       const selectedOffering = {};
@@ -107,7 +103,71 @@ export default class TbdDexController {
   }
 
   static async sendRfq(req, res) {
-    const resolvedDhtDid = await DidDht.resolve('did:dht:xgxzcs8gp1ywp1iqc1rebfegn53meg6im8imhjkj8gutjc136nwo');
-    return res.json({ resolvedDhtDid });
+    // Route building still in progress
+    const {
+      userId, OfferingId, PfiDid,
+      payinAmount, requiredPayinDetails,
+      requiredPayoutDetails,
+    } = req.body;
+    const { TbdexHttpClient, Rfq } = await getTbdexHttpClient();
+    const accInfo = await pool.query(`
+      SELECT user_did, user_VC
+      FROM accounts
+      WHERE user_id = $1;
+      `, [userId]);
+
+    let offering;
+
+    try {
+      const pfiOfferings = await TbdexHttpClient.getOfferings({ pfiDid: PfiDid });
+      offering = pfiOfferings.filter((offering) => offering.metadata.id === OfferingId);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      PresentationExchange.satisfiesPresentationDefinition({
+        vcJwts: accInfo.rows[0].user_vc,
+        presentationDefinition: offering[0].data.requiredClaims,
+      });
+      console.log('Matched results');
+    } catch (error) {
+      console.error('Claims verification failed', error);
+      return res.status(403).json({ message: 'Your Credentials don\'t satisfy this pfi. Choose another' });
+    }
+
+    const selectedCredentials = PresentationExchange.selectCredentials({
+      vcJwts: accInfo.rows[0].user_vc,
+      presentationDefinition: offering[0].data.requiredClaims,
+    });
+
+    const payinDetails = {
+      kind: offering[0].data.payin.methods[0].kind,
+      amount: payinAmount,
+      paymentDetails: requiredPayinDetails,
+    };
+
+    const payoutDetails = {
+      kind: offering[0].data.payout.methods[0].kind,
+      paymentDetails: requiredPayoutDetails,
+    };
+
+    const rfq = Rfq.create({
+      metadata: {
+        to: PfiDid,
+        from: accInfo.rows[0].user_did,
+        protocol: '1.0',
+      },
+      data: {
+        offeringId: OfferingId,
+        payin: payinDetails,
+        payout: payoutDetails,
+        claims: selectedCredentials,
+      },
+    });
+    if (offering) {
+      return res.json({ offering });
+    }
+    return res.status(401).json({ error: 'invalid query' });
   }
 }

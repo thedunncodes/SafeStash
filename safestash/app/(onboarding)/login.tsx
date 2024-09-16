@@ -12,6 +12,7 @@ import errorStyles from "@/constants/errorStyles";
 import { useAuth } from "@/components/appStates/authSession";
 
 
+
 export default function Personalize() {
     const [ password, setPassword ] = useState<string>('')
 
@@ -34,7 +35,7 @@ export default function Personalize() {
     const handleSubmit = () => {
         if (ValidateForm()) {
             try {
-                axios.post('https://flying-still-sunbird.ngrok-free.app/login', {
+                axios.post(`${process.env.NGROK_TUNNEL}/login`, {
                     email, password
                 })
                     .then(response => {

@@ -11,6 +11,7 @@ import { formValidation, useAppState } from "@/components/appStates/onboardingFo
 import errorStyles from "@/constants/errorStyles";
 
 
+
 export default function Personalize() {
     const [confirmPass, setConfirmPass] = useState<string>('')
     const [ password, setPassword ] = useState<string>('')
@@ -37,7 +38,7 @@ export default function Personalize() {
         // Check for form validation
         if (ValidateForm()) {
             try {
-                axios.post('https://flying-still-sunbird.ngrok-free.app/register', {
+                axios.post(`${process.env.NGROK_TUNNEL}/register`, {
                     email, password
                 })
                     .then(response => {
