@@ -37,7 +37,7 @@ export default function Personalize() {
 
     const handleSubmit = () => {
         try {
-            axios.post(`${process.env.NGROK_TUNNEL}/tags`, {
+            axios.post(`${process.env.EXPO_PUBLIC_NGROK_TUNNEL}/tags`, {
                 email, tags: tagList
             })
                 .then(response => {

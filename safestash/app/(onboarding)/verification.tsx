@@ -57,7 +57,7 @@ export default function Verify() {
 
         // if (ValidateForm()) {
         try {
-            axios.post(`${process.env.NGROK_TUNNEL}/submit`, {
+            axios.post(`${process.env.EXPO_PUBLIC_NGROK_TUNNEL}/submit`, {
                 email, mobileNumber: `${countryCode}${mobileNumber}`,
                 rMobileOtp: mobileOtp, rEmailOtp: emailOtp
             })

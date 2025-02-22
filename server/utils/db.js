@@ -31,7 +31,7 @@ async function createTables() {
       user_id INT REFERENCES user_profile (user_id),
       balance DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
       currency VARCHAR(3) NOT NULL,
-      user_did VARCHAR(60) NOT NULL UNIQUE,
+      user_did VARCHAR NOT NULL UNIQUE,
       user_VC TEXT[],
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

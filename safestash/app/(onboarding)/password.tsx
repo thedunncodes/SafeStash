@@ -38,7 +38,7 @@ export default function Personalize() {
         // Check for form validation
         if (ValidateForm()) {
             try {
-                axios.post(`${process.env.NGROK_TUNNEL}/register`, {
+                axios.post(`${process.env.EXPO_PUBLIC_NGROK_TUNNEL}/register`, {
                     email, password
                 })
                     .then(response => {

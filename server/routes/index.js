@@ -26,4 +26,6 @@ router.post('/sendRfq', TbdDexController.sendRfq);
 
 router.post('/credentials', TbdDexController.credentials);
 
+router.post('/close-Exchange', TbdDexController.closeExchange);
+
 module.exports = router;

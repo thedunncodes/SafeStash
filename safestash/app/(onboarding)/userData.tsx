@@ -41,7 +41,7 @@ export default function Data() {
         // Check for form validation
         if (ValidateForm()) {
             try {
-                axios.post(`${process.env.NGROK_TUNNEL}/userProfile`, {
+                axios.post(`${process.env.EXPO_PUBLIC_NGROK_TUNNEL}/userProfile`, {
                     email, givenName, lastName, dob: dateField, country, occupation, code: countryCode
                 })
                     .then(response => {

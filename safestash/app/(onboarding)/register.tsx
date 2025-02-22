@@ -8,7 +8,8 @@ import Header from '@/components/onboarding/header';
 import FormInput from '@/components/formInput';
 import { formValidation, useAppState } from '@/components/appStates/onboardingFormStates';
 import errorStyles from '@/constants/errorStyles';
-
+import Config from 'react-native-config';
+const NgrokTunnel = Config.NGROK_TUNNEL;
 
 export default function Reg() {
     const {
@@ -40,7 +41,7 @@ export default function Reg() {
     const handleSubmit = () => {
         if (ValidateForm()) {
             try {
-                axios.post(`${process.env.NGROK_TUNNEL}/verify`, {email, mobileNumber: `${countryCode}${mobileNumber}`, code: countryCode,})
+                axios.post(`${process.env.EXPO_PUBLIC_NGROK_TUNNEL}/verify`, {email, mobileNumber: `${countryCode}${mobileNumber}`, code: countryCode,})
                     .then(response => {
                         console.log(response.data)
                         router.navigate('/verification')

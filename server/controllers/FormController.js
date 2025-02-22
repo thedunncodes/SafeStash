@@ -38,55 +38,55 @@ export default class FormController {
     await redisClient.set('PhoneNumber', mobileNumber, 5 * 60);
     await redisClient.set('code', code, 5 * 60);
 
-    const mobileNumberData = {
-      meta_data: { first_name: 'SafeStash' },
-      channel: 'sms',
-      sender: 'Sendchamp',
-      token_type: 'numeric',
-      token_length: 6,
-      expiration_time: 5,
-      customer_mobile_number: mobileNumber.slice(1),
-      token: otp,
-    };
+    // const mobileNumberData = {
+    //   meta_data: { first_name: 'SafeStash' },
+    //   channel: 'sms',
+    //   sender: 'Sendchamp',
+    //   token_type: 'numeric',
+    //   token_length: 6,
+    //   expiration_time: 5,
+    //   customer_mobile_number: mobileNumber.slice(1),
+    //   token: otp,
+    // };
 
-    const emailData = {
-      meta_data: { first_name: 'SafeStash' },
-      channel: 'email',
-      sender: 'Sendchamp',
-      token_type: 'numeric',
-      token_length: 6,
-      expiration_time: 5,
-      customer_email_address: email,
-      token: emailOtp,
-    };
+    // const emailData = {
+    //   meta_data: { first_name: 'SafeStash' },
+    //   channel: 'email',
+    //   sender: 'Sendchamp',
+    //   token_type: 'numeric',
+    //   token_length: 6,
+    //   expiration_time: 5,
+    //   customer_email_address: email,
+    //   token: emailOtp,
+    // };
 
-    const header = {
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        Authorization: process.env.OTP_API_KEY,
-      },
-    };
+    // const header = {
+    //   headers: {
+    //     accept: 'application/json',
+    //     'content-type': 'application/json',
+    //     Authorization: process.env.OTP_API_KEY,
+    //   },
+    // };
 
-    try {
-      axios.post('https://api.sendchamp.com/api/v1/verification/create', mobileNumberData, header)
-        .then(((response) => {
-          console.log(response.data);
-        }))
-        .catch((error) => {
-          console.error('Phone Number OTP Request Failed', error);
-        });
+    // try {
+    //   axios.post('https://api.sendchamp.com/api/v1/verification/create', mobileNumberData, header)
+    //     .then(((response) => {
+    //       console.log(response.data);
+    //     }))
+    //     .catch((error) => {
+    //       console.error('Phone Number OTP Request Failed', error);
+    //     });
 
-      axios.post('https://api.sendchamp.com/api/v1/verification/create', emailData, header)
-        .then(((response) => {
-          console.log(response.data);
-        }))
-        .catch((error) => {
-          console.error('Email OTP Request Failed', error);
-        });
-    } catch (err) {
-      console.error('Email OTP Request Failed', err);
-    }
+    //   axios.post('https://api.sendchamp.com/api/v1/verification/create', emailData, header)
+    //     .then(((response) => {
+    //       console.log(response.data);
+    //     }))
+    //     .catch((error) => {
+    //       console.error('Email OTP Request Failed', error);
+    //     });
+    // } catch (err) {
+    //   console.error('Email OTP Request Failed', err);
+    // }
 
     return res.status(201).send({ message: `Verification for ${email} with Phone Number ${mobileNumber} successful.\n` });
   }
@@ -104,15 +104,15 @@ export default class FormController {
     const userPhone = await redisClient.get('PhoneNumber');
     const userCode = await redisClient.get('code');
 
-    if (emailkey !== rEmailOtp || phoneKey !== rMobileOtp) {
-      console.log(`Email OTP: ${emailkey}\nPhone OTP: ${phoneKey}`);
-      const emailErrorBool = (emailkey !== rEmailOtp);
-      const phoneErrorBool = (phoneKey !== rMobileOtp);
-      return res.status(401).json({
-        emailError: emailErrorBool ? 'Invalid EmailOTP' : null,
-        phoneError: phoneErrorBool ? 'Invalid MobileOTP' : null,
-      });
-    }
+    // if (emailkey !== rEmailOtp || phoneKey !== rMobileOtp) {
+    //   console.log(`Email OTP: ${emailkey}\nPhone OTP: ${phoneKey}`);
+    //   const emailErrorBool = (emailkey !== rEmailOtp);
+    //   const phoneErrorBool = (phoneKey !== rMobileOtp);
+    //   return res.status(401).json({
+    //     emailError: emailErrorBool ? 'Invalid EmailOTP' : null,
+    //     phoneError: phoneErrorBool ? 'Invalid MobileOTP' : null,
+    //   });
+    // }
 
     const country = countries.all.filter((country) => country.countryCallingCodes[0] === userCode);
     const didDht = await DidDht.create({ options: { publish: true } });
@@ -129,11 +129,15 @@ export default class FormController {
         `, [userEmail, userPhone, userCode]);
 
       if (response && didDht) {
+        const portabledid = await didDht.export();
+        const portabledidStr = JSON.stringify(portabledid);
+        // eslint-disable-next-line no-undef
+        const hashPortabledid = btoa(portabledidStr);
         const accRes = await pool.query(`
             INSERT INTO accounts (user_id, currency, user_did)
             VALUES ($1, $2, $3)
             RETURNING account_id;
-          `, [response.rows[0].user_id, country[0].currencies[0], didDht.uri]);
+          `, [response.rows[0].user_id, country[0].currencies[0], hashPortabledid]);
         console.log(accRes);
       }
 
