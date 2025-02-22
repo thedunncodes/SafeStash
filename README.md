@@ -42,7 +42,7 @@ As a tbDEX network participant making cross-border payments might be easy, but r
     - `DB_PASSWORD`: Postgresql database password
     - `JWT_SECRET_KEY`: Randomly generated key to be used for session security(you can use `UUID4` to generate a random key)
     - `OTP_API_KEY`: Send champ API key in form of `Bearer API_KEY_`
-    - `NGROK_TUNNEL`: Set this whenever you are connected, if you also have a stable domain for ngrok its better, you won't be changing it everytime you are connected
+    - `NGROK_TUNNEL`: Set this in the `safestash` dir whenever you are connected, if you also have a stable domain for ngrok its better, you won't be changing it everytime you are connected
 
 
 5. **Running the application:**
@@ -54,7 +54,7 @@ As a tbDEX network participant making cross-border payments might be easy, but r
     - Start expo server for react native :
         ```sh
         cd server
-        npm run start-server
+        npx expo start
         ```
     - To view the application on your mobile:
         Make sure you have downloaded expo go then after starting the expo server a qr code will be generated for you to scan and view the app
